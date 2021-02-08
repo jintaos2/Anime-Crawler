@@ -31,7 +31,7 @@ def dmhy():
         release_magnet = re.findall( r'href="([^"]*)"',detail[3])[-1]
         release_size = re.sub(r'<.*?>','',detail[4])
         new_items.append([release_time, release_type, release_title, release_magnet,release_size])  
-    return update_list('dmhy', new_items)  
+    return update_list('dmhy', new_items)
 
 
 def update_list(source, new_items):
@@ -53,7 +53,7 @@ def update_list(source, new_items):
     with open(file_curr, 'a+', encoding='utf8') as f:
         for i in  reversed(new_items):
             f.write(','.join(i)+'\n\n')    # newline
-    return file_curr, idx
+    return new_items
 
 
 
