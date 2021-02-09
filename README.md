@@ -7,8 +7,8 @@
 
 ```
 Animate_crawler                    
-├─ dmhy                        # all data of dmhy.org, by month                                                      
-├─ docu                        # all data of docuwiki.net, by year                         
+├─ dmhy                        # all data of dmhy.org, by month  
+├─ docu                        # all data of docuwiki.net, by year   
 ├─ live_update                 # real time update 
 │  ├─ dmhy                     # data of dmhy.org, by day 
 │  ├─ nyaa                     # data of nyaa.si, by day    
