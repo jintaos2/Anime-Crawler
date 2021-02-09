@@ -1,16 +1,15 @@
 import re
 import datetime
 import os
-
+import xmlrpc.client
   
 def update_message(new_items, message_file):
-    rules = [Rule(i) for i in read_rules()]
+    rules =  read_rules()
     for i in rules:
-        i.title_and = []
         i.epsodes = '*'
     for item in reversed(new_items):
         for rule in rules:
-            idx = rule.match(item[1] + ' ' + item[2])
+            idx, _ = rule.match(item[1] + ' ' + item[2])
             if idx != -1:
                 with open(message_file,'a+', encoding='utf8') as f:
                     f.write('{}'.format(datetime.datetime.today())[:-7] + ' [new] ' + item[2] + '\n')
@@ -19,16 +18,16 @@ def update_message(new_items, message_file):
 
 def download(message_file):
     items = read_history(7)
-    rules = [Rule(i) for i in read_rules()]
+    rules =  read_rules()
     for rule in rules:
         results = {}
         for item in items:
-            idx = rule.match(item[1] + ' ' + item[2])
+            idx, score = rule.match(item[1] + ' ' + item[2])
             if idx != -1:
                 key = idx
                 if not key in results:
                     results[key] = []
-                results[key].append(item)
+                results[key].append([score] + item[1:])
         download2(results, message_file)
         for i in results.keys():      # delete some rules
             if i == '*':
@@ -46,12 +45,20 @@ def download2(results, message_file):
             download3(i,message_file)
     else:
         for i in results.values():
+            i.sort(key = lambda x: x[0], reverse=True)
             download3(i[0],message_file)
 
 def download3(item, message_file):
+    if item[0] < 1:
+        return
     with open(message_file,'a+', encoding='utf8') as f:
-        f.write('{}'.format(datetime.datetime.today())[:-7] + ' [download] ' + item[2] + ', ' + item[4], '\n')
-
+        f.write('{}'.format(datetime.datetime.today())[:-7] + ' [download] ' + item[2] + ', ' + item[3] + '\n')
+    try:
+        s = xmlrpc.client.ServerProxy('http://localhost:6800/rpc')
+        s.aria2.addUri([item[3]],{'dir': 'C:/Users/Sun/Desktop/video'})
+    except Exception as e:
+        with open(message_file,'a+', encoding='utf8') as f:
+            f.write('{}'.format(datetime.datetime.today())[:-7] + ' [error] download error! ' + e + '\n')  
 
 
 
@@ -63,7 +70,7 @@ def read_rules():
             ret += re.findall(r'{[\s\S]*?}',l)
     except:
         pass            
-    return ret
+    return [Rule(i) for i in ret]
 
 def write_rules(rules):
     try:
@@ -90,13 +97,19 @@ class Rule():
     def __init__(self, s):
         temp = re.findall(r'title_or.*',s)[0]
         self.title_or = re.findall(r"'(.*?)'",temp)
-        temp = re.findall(r'title_and.*',s)[0]
-        self.title_and = re.findall(r"'(.*?)'",temp)
-        temp = re.findall(r'epsode_re.*',s)[0]
-        temp = re.findall(r"'(.*?)'",temp)
+        temp = re.findall(r'title_and.*',s)
+        if len(temp) == 0:
+            temp = [r"""'動畫','简|CHS|GB','1080'"""]
+        self.title_and = re.findall(r"'(.*?)'",temp[0])
+        temp = re.findall(r'epsode_re.*',s)
+        if len(temp)==0:
+            temp = [r"""'[^a-zA-Z0-9](\d\d)[^a-zA-Z0-9]'"""]
+        temp = re.findall(r"'(.*?)'",temp[0])
         self.epsode_re = '' if len(temp)==0 else temp[0]  
-        temp = re.findall(r'epsodes.*',s)[-1]
-        epsodes_ = re.findall(r"'(.*?)'",temp)
+        temp = re.findall(r'epsodes.*',s)
+        if len(temp)==0:
+            temp = [r"""'*'"""]
+        epsodes_ = re.findall(r"'(.*?)'",temp[-1])
         self.epsodes = []
         for i in epsodes_:
             if i == '*':
@@ -135,15 +148,15 @@ class Rule():
         for i in self.title_and:
             if len(re.findall(i,s))>0:
                 count_title_and += 1   
-        if count_title_or > 0 and count_title_and == len(self.title_and):
+        if count_title_or > 0:
             if '*' in self.epsodes:
-                return '*'
+                return '*', count_title_and
             epsode_ = re.findall(self.epsode_re, s)
-            if len(epsode_) > 0:
+            if len(epsode_) > 0 and re.match(r'\d\d', epsode_[-1]):
                 epsode = int(epsode_[-1])
                 if epsode in self.epsodes:
-                    return epsode
-        return -1
+                    return epsode, count_title_and
+        return -1, 0
     def delete(self, epsode):
         while epsode in self.epsodes:
             self.epsodes.remove(epsode)

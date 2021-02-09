@@ -2,7 +2,7 @@ import requests
 import re
 import datetime
 
-
+# update list from nyaa main page
 def nyaa():
     r=requests.get("https://nyaa.si/")
     table = re.findall(r'<tbody>[\s\S]*</tbody>',r.text)[0]    
@@ -18,6 +18,7 @@ def nyaa():
         new_items.append([release_time, release_type, release_title, release_magnet,release_size])
     return update_list('nyaa', new_items)
 
+# update list from dmhy main page
 def dmhy():
     r=requests.get("https://share.dmhy.org/")
     table = re.findall(r'<tbody>[\s\S]*</tbody>',r.text)[0]    
@@ -34,6 +35,8 @@ def dmhy():
     return update_list('dmhy', new_items)
 
 
+# if the list of new records will be cut off at the position where 3 duplicated records appears in history records
+# then write new records in dmhy/[localtime].txt
 def update_list(source, new_items):
     curr_date = datetime.date.today()
     file_curr = '{}/{}.txt'.format(source, curr_date)
@@ -56,7 +59,7 @@ def update_list(source, new_items):
     return new_items
 
 
-
+# find order records by file name
 def find_record(file_curr, recent_records):
     try:
         with open(file_curr,'r',encoding='utf8') as f:
