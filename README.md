@@ -53,7 +53,7 @@ Animate_crawler
 指定某一集示例
 ```
 {
-    title_or = '[桜都字幕组] 进击的巨人 The Final Season / Shingeki no Kyojin The Final Season [66][1080p][简日内嵌]'
+    title_or = '进击的巨人 The Final Season / Shingeki no Kyojin The Final Season [66][1080p][简日内嵌]'
 }
 ```
 
