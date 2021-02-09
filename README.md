@@ -67,6 +67,25 @@ Animate_crawler
 
 爬取 docuwiki.net 上按年分类记录片，每次新增记录会再次保持在另一文件。爬取内容为标题和 ed2k 链接
 
+### Other features 
+
+两个 log 文件，一个形如
+```
+2021-02-09 03:33:35 [update] dmhy update 80 items.
+2021-02-09 03:35:11 [update] dmhy update 7 items.
+2021-02-09 03:36:58 [update] dmhy update 2 items.
+2021-02-09 03:48:19 [update] dmhy update 0 items.
+2021-02-09 04:00:19 [update] dmhy update 0 items.
+```
+
+一个如
+```
+2021-02-09 03:32:21 [new] title
+2021-02-09 03:32:21 [new] title
+2021-02-09 03:32:21 [download] title, 磁链
+2021-02-09 03:32:21 [download] title, 磁链
+```
+用于消息同步
 
 ### Notice 
 
