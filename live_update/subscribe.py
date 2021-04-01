@@ -77,7 +77,7 @@ class subscribe:
     def read_rules(self):
         ret = []
         try:
-            with open('subscribe/mylist.txt', 'r', encoding='utf8') as f:
+            with open('mylist.txt', 'r', encoding='utf8') as f:
                 l = f.read()
                 ret += re.findall(r'{[\s\S]*?}',l)
         except:
@@ -86,7 +86,7 @@ class subscribe:
 
     def write_rules(self,rules):
         try:
-            with open('subscribe/mylist.txt', 'w+', encoding='utf8') as f:
+            with open('mylist.txt', 'w+', encoding='utf8') as f:
                 for i in rules:
                     f.write(i.store()+'\n')
         except:

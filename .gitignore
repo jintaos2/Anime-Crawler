@@ -1,7 +1,8 @@
 *.ipynb_checkpoints
 *__pycache__/
 *.txt 
-
+!live_update/config.txt 
+!live_update/mylist.txt
 
 
 
