@@ -7,7 +7,7 @@ import subscribe
 
 
 if __name__ == "__main__":
-    time.sleep(1)
+    time.sleep(5)
     config = {}
     config_necessary = ['subscribe_log', 'download_dir', 'aria2_server']
     with open('config.txt', 'r',encoding='utf8') as f:
