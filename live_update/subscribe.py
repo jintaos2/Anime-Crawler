@@ -24,9 +24,8 @@ class subscribe:
                     break 
 
 
-    def download(self):
-        global download_count 
-        download_count = 0
+    def download(self): 
+        self.download_count = 0
         items = self.read_history(30)
         rules =  self.read_rules()
         for rule in rules:
@@ -47,7 +46,7 @@ class subscribe:
                 rule.delete(i)
             if len(rule.epsodes) == 0:
                 rules.remove(rule)
-        if download_count > 0:
+        if self.download_count > 0:
             with open(self.logfile,'a+', encoding='utf8') as f:
                 f.write('-----------------\n')         
         self.write_rules(rules)
