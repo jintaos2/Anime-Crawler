@@ -5,8 +5,9 @@ import xmlrpc.client
 
 
 class subscribe:
-    def __init__(self, logfile, download_dir, aria2_server):
+    def __init__(self, logfile, listfile, download_dir, aria2_server):
         self.logfile = logfile
+        self.listfile = listfile
         self.download_dir = download_dir
         self.download_count = 0
         self.aria2_server = aria2_server
@@ -77,7 +78,7 @@ class subscribe:
     def read_rules(self):
         ret = []
         try:
-            with open('mylist.txt', 'r', encoding='utf8') as f:
+            with open(self.listfile, 'r', encoding='utf8') as f:
                 l = f.read()
                 ret += re.findall(r'{[\s\S]*?}',l)
         except:
@@ -86,7 +87,7 @@ class subscribe:
 
     def write_rules(self,rules):
         try:
-            with open('mylist.txt', 'w+', encoding='utf8') as f:
+            with open(self.listfile, 'w+', encoding='utf8') as f:
                 for i in rules:
                     f.write(i.store()+'\n')
         except:

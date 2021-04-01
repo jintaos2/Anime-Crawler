@@ -9,7 +9,7 @@ import subscribe
 if __name__ == "__main__":
     time.sleep(5)
     config = {}
-    config_necessary = ['subscribe_log', 'download_dir', 'aria2_server']
+    config_necessary = ['subscribe_log', 'subscribe_list', 'download_dir', 'aria2_server']
     with open('config.txt', 'r',encoding='utf8') as f:
         for i in f.readlines():
             config_items = re.findall(r'\s*(\w*)\s*=\s*(.*)', re.sub(r'[\n\t]','',i))
@@ -21,12 +21,15 @@ if __name__ == "__main__":
             os._exit(1)
         
     subscribe_log = config['subscribe_log']
+    subscribe_list = config['subscribe_list']
     download_dir = config['download_dir']
     aria2_server = config['aria2_server']
-    if not os.path.exists(subscribe_log) or not os.path.exists(download_dir):
-        print('[error] path does not exist')
-        os._exit(1)
-    downloader = subscribe.subscribe(subscribe_log, download_dir, aria2_server)
+    for i in [subscribe_log, download_dir, subscribe_list]:
+        if not os.path.exists(i):
+            print('[error] {} does not exist'.format(i))
+            os._exit(1)
+            
+    downloader = subscribe.subscribe(subscribe_log, subscribe_list, download_dir, aria2_server)
     
     while True:
         source_list = [animate.dmhy]
