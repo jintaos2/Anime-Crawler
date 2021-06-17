@@ -24,5 +24,7 @@ def _init(error_log:str, update_log:str):
     formatter = logging.Formatter("%(asctime)s %(message)s",'%Y/%m/%d %I:%M:%S')
     fh.setFormatter(formatter)
     update_logger.addHandler(fh)
-
     error_logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start")
+    
+    with open(error_log, 'a+', encoding='utf8') as f:
+        f.write("start")
