@@ -1,4 +1,0 @@
-subscribe_log = 'C:/Users/j/OneDrive/log.txt'
-subscribe_list = 'C:/Users/j/OneDrive/mylist.txt'
-download_dir = 'C:/Users/j/Desktop/nas/animate'
-aria2_server = 'http://localhost:6800/rpc'
