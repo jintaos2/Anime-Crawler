@@ -11,7 +11,7 @@ def _init(error_log:str, update_log:str):
     
     fh = logging.FileHandler(error_log, mode='a', encoding='utf8')
     fh.setLevel(logging.INFO)
-    formatter = logging.Formatter("%(asctime)s (%(filename)s:%(lineno)d) %(message)s ",'%Y/%m/%d %I:%M:%S')
+    formatter = logging.Formatter("%(asctime)s (%(filename)s:%(lineno)d) %(message)s ",'%Y/%m/%d %H:%M:%S')
     fh.setFormatter(formatter)
     error_logger.addHandler(fh)
     ch = logging.StreamHandler()
