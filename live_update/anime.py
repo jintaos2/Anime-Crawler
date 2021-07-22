@@ -34,7 +34,7 @@ def dmhy()->list:
         release_type = re.sub(r'<.*?>','',detail[1])
         release_title = re.findall(r'<a.*?>(.*?)</a>',detail[2])[-1]
         release_title = re.sub(r',','.',release_title)
-        release_magnet = re.findall( r'href="([^"]*)"',detail[3])[-1]
+        release_magnet = re.findall( r'href="([^"]*)"',detail[3])[0]
         release_size = re.sub(r'<.*?>','',detail[4])
         new_items.append([release_time, release_type, release_title, release_magnet,release_size])  
     return new_items
