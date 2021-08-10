@@ -1,5 +1,5 @@
 {
-    "log_dir": "C:/Users/j/OneDrive/log",
+    "log_dir": "/usr/iso/log",
     "download_dir": "/mnt/anime",
     "aria2": "http://192.168.3.10:6800/rpc"
 }
