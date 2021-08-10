@@ -2,6 +2,11 @@
 
 自用动漫爬虫，每隔10分钟爬取 dmhy.org 首页并跟新本地缓存，自动匹配番剧，自动 aria2c 下载。还包含全局动漫搜索和纪录片爬取的 jupyter notebook.
 
+##### 环境　
+
+- aria2c
+- python3
+
 ### Files
 
 
