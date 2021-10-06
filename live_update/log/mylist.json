@@ -1,0 +1,332 @@
+[
+  {
+    "dir": "白沙的水族馆",
+    "title": [
+      "白沙的水族馆|Shiroi Suna",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+    ]
+  },
+  {
+    "dir": "贾希大人不气馁",
+    "title": [
+      "贾希大人不气馁|Jahy-sama",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "平稳世代的韦驮天们",
+    "title": [
+      "平稳世代的韦驮天们|Heion Sedai no Idaten",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "蓝色时期",
+    "title": [
+      "蓝色时期|Blue Period",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "86-不存在的战区",
+    "title": [
+      "不存在的战区|EIGHTY SIX",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+    ]
+  },
+  {
+    "dir": "看得见的女孩",
+    "title": [
+      "看得见的女孩|Mieruko-chan",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "月与莱卡与吸血姬",
+    "title": [
+      "月与莱卡与吸血姬|Tsuki to Laika",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "无职转生",
+    "title": [
+      "无职转生|Mushoku Tensei Isekai",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "13",
+      "14",
+      "15",
+      "16",
+      "17",
+      "18",
+      "19",
+      "20",
+      "21",
+      "22",
+      "23",
+      "24"
+    ]
+  },
+  {
+    "dir": "星期一",
+    "title": [
+      "星期一|Tawawa On MondayS",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "三角窗外是黑夜",
+    "title": [
+      "三角窗外是黑夜|Sankaku Mado no Sotogawa",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "加油吧同期酱",
+    "title": [
+      "加油吧同期酱|Ganbare Douki",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "进化果实",
+    "title": [
+      "Shinka no Mi",
+      "動畫"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "简|CHS|GB|繁|CHT|BIG5",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  }
+]

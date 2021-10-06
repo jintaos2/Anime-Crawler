@@ -1,8 +1,7 @@
 *.ipynb_checkpoints
 *__pycache__/
 *.txt 
-live_update/log/
 *.vscode/
-
+*.log
 
 
