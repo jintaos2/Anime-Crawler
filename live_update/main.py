@@ -14,7 +14,7 @@ if __name__ == "__main__":
         os._exit(1)
 
 
-    time.sleep(60)
+    time.sleep(10)
 
     module = updater.Updater()
 
