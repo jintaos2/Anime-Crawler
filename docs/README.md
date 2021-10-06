@@ -44,38 +44,22 @@ run: `python main.py`
 番剧列表: `./log/mylist.json`
 
 ```json
-[{
-    "dir": "致不灭的你",
+[ {
+    "dir": "境界战机",
     "title": [
-        "致不灭的你|Fumetsu no Anata",
-        "動畫"
+      "境界战机|Kyoukai Senki",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
     ],
     "title_optional": [
-        "简|CHS|GB",
-        "1080"
+      "简|CHS|GB",
+      "1080|2160"
     ],
     "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
     "order": 0,
     "status": "active",
     "epsodes": [
-        "11-15"
-    ]
-},
-{
-    "dir": "Back Arrow",
-    "title": [
-        "Back Arrow",
-        "動畫"
-    ],
-    "title_optional": [
-        "简|CHS|GB",
-        "1080"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
-    "order": 0,
-    "status": "active",
-    "epsodes": [
-        "24-26"
+      "01-13"
     ]
 }]
 ```
