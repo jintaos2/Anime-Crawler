@@ -17,18 +17,24 @@ def path_format(a:str):
 class Updater:
     def __init__(self):
         self.load_config() 
+        # see anime.py
         self.anime = Anime(self.cache_dir)
+        # see subscribe.py
         self.downloader = Subscribe(self.list_path, self.cache_dir, self.aria2_url, self.aria2_dir)
 
     def load_config(self):
-        self.main_dir = os.path.abspath(os.path.dirname(__file__))
+        self.main_dir = path_format(os.path.abspath(os.path.dirname(__file__)))
         try: 
             with open(os.path.join(self.main_dir,"config.json"), 'r',  encoding='utf8') as f:
                 config = json.load(f)
 
+            # log_dir support relative path: ./log     ../log   .etc
             self.log_dir = path_format(config["log_dir"])
+            if self.log_dir[0] == '.':
+                self.log_dir = self.main_dir + self.log_dir
             if not os.path.isdir(self.log_dir):
                 raise Exception("log dir not exist!") 
+            print(f"log directory is: {self.log_dir}")
 
             # aria2 parameter
             self.aria2_dir = path_format(config["download_dir"])
@@ -39,7 +45,7 @@ class Updater:
             self.update_log = self.log_dir + "update.log"
             logs._init(self.error_log, self.update_log)
 
-            # list file path
+            # config file path
             self.list_path = self.log_dir + "mylist.json"
             if not os.path.isfile(self.list_path):
                 raise Exception("list.json not exist!")

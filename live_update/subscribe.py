@@ -6,15 +6,16 @@ import logs
 
 class Subscribe:
     """rules
-    {
-        "dir": "进击的巨人",
-        "title": ["进击的巨人|進擊的巨|Shingeki no Kyojin", "動畫"],
-        "title_optional": ["简|CHS|GB", "1080"],
+    [{
+        "dir": "平稳世代的韦驮天们",
+        "title": [ "平稳世代的韦驮天们|Heion Sedai no Idaten", "動畫" ],
+        "title_optional": [ "简|CHS|GB", "简|CHS|GB|繁|CHT|BIG5", "1080|2160" ],
         "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
         "order": 0,
         "status": "active",
-        "epsodes": ["01", "02", "03-08"]
-    }"""
+        "epsodes": [ "12", "13" ]
+    }]
+    """
     def __init__(self, list_file:str, cache_dir:str, aria2_url:str, aria2_dir:str):
         self.list_file = list_file
         self.cache_dir = cache_dir
@@ -24,10 +25,10 @@ class Subscribe:
         self.items = []    # new items 
         self.rules = []    # new rules
 
-    def download(self): 
-        self.read_rules()
-        self.read_history(12)
-        self.todo = 0
+    def download(self):    
+        self.read_rules()  # odd rules
+        self.read_history(12)  # cached items
+        self.n_new = 0    # number of new mached items
 
         for rule in self.rules:
             curr_rule = Rule(rule)
@@ -35,7 +36,7 @@ class Subscribe:
             if rule["status"] == "dead":  # no need to match
                 continue
             results = {}                        # {epsode: [(score, link, dir, title), (score, link, dir, title)]}
-            for item in self.items:         # [release_time, release_type, release_title, release_magnet,release_size]
+            for item in self.items:             # [release_time, release_type, release_title, release_magnet,release_size]
                 epsode, score = curr_rule.match(item)
                 if epsode == -1:
                     continue
@@ -58,23 +59,23 @@ class Subscribe:
 
             curr_rule.store()         # restore epsode
 
-        if self.todo > 0:
+        if self.n_new > 0:
             logs.update_logger.info("----------------------------")
         self.write_rules()
                  
 
     # (score, link, dir, title)
     def download_item(self,item):
-        self.todo += 1
+        self.n_new += 1
         _, link, subdir, title = item
         try:
             s = xmlrpc.client.ServerProxy(self.aria2_url)
             id = s.aria2.addUri([link],{'dir': self.aria2_dir + subdir})
-            info = s.aria2.tellStatus(id)
-            logs.update_logger.info(f"[download] {title}")
+            aria_status = s.aria2.tellStatus(id)
+            logs.update_logger.info(f"[download] {title} dir:{aria_status['dir']}")
             return True
         except Exception as e:
-            logs.error_logger.info(f"[error download] {e}")
+            logs.error_logger.info(f"[aria2 download fault, will try again] {e}")
             logs.update_logger.info(f"[new] {title}")
             return False
 

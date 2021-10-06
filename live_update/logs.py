@@ -1,9 +1,15 @@
 import logging 
 
+# global variable
+_debug: bool = False
+
 error_logger = logging.getLogger('error')
 update_logger = logging.getLogger('info')
 
 def _init(error_log:str, update_log:str):
+    """
+    input: log file name
+    """
     global error_logger
     global update_logger
     error_logger.setLevel(logging.INFO)
@@ -26,5 +32,3 @@ def _init(error_log:str, update_log:str):
     update_logger.addHandler(fh)
     error_logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     
-    with open(error_log, 'a+', encoding='utf8') as f:
-        f.write("start\n")
