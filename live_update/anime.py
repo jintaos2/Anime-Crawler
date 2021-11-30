@@ -12,7 +12,7 @@ def dmhy(nth:int)->list:
     return list([release_time, release_type, release_title, release_magnet,release_size])
     """
     new_items = []
-    r=requests.get(f"https://share.dmhy.org/topics/list/page/{nth}")  # 1, 2, 3 ...
+    r=requests.get(f"https://dmhy.org/topics/list/page/{nth}")  # 1, 2, 3 ...
     table = re.findall(r'<tbody>[\s\S]*</tbody>',r.text)[0]    
     rows = re.findall(r'<tr[\s\S]*?</tr>',table)                          
     for i in rows:

@@ -14,14 +14,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
-      "21",
       "22",
       "23",
       "24"
@@ -42,29 +34,10 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "10",
-      "11",
-      "12",
-      "13"
-    ]
-  },
-  {
-    "dir": "平稳世代的韦驮天们",
-    "title": [
-      "平稳世代的韦驮天们|Heion Sedai no Idaten",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "title_optional": [
-      "简|CHS|GB",
-      "1080|2160"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
-    "order": 0,
-    "status": "active",
-    "epsodes": [
-      "12",
-      "13"
+      "17",
+      "18",
+      "19",
+      "20"
     ]
   },
   {
@@ -82,14 +55,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
       "11",
       "12",
       "13"
@@ -110,12 +75,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
       "19",
       "20",
       "21",
@@ -139,14 +98,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
       "10",
       "11",
       "12",
@@ -168,14 +119,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
       "10",
       "11",
       "12",
@@ -185,7 +128,7 @@
   {
     "dir": "无职转生",
     "title": [
-      "无职转生|Mushoku Tensei Isekai",
+      "无职转生|Mushoku Tensei",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
@@ -197,14 +140,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "13",
-      "14",
-      "15",
-      "16",
-      "17",
-      "18",
-      "19",
-      "20",
       "21",
       "22",
       "23",
@@ -226,128 +161,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-      "13"
-    ]
-  },
-  {
-    "dir": "三角窗外是黑夜",
-    "title": [
-      "三角窗外是黑夜|Sankaku Mado no Sotogawa",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "title_optional": [
-      "简|CHS|GB",
-      "1080|2160"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
-    "order": 0,
-    "status": "active",
-    "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-      "13"
-    ]
-  },
-  {
-    "dir": "加油吧同期酱",
-    "title": [
-      "加油吧同期酱|Ganbare Douki",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "title_optional": [
-      "简|CHS|GB",
-      "1080|2160"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
-    "order": 0,
-    "status": "active",
-    "epsodes": [
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-      "13"
-    ]
-  },
-  {
-    "dir": "进化果实",
-    "title": [
-      "Shinka no Mi",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "title_optional": [
-      "简|CHS|GB",
-      "1080|2160"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
-    "order": 0,
-    "status": "active",
-    "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
-      "12",
-      "13"
-    ]
-  },
-  {
-    "dir": "吸血鬼馬上死",
-    "title": [
-      "吸血鬼馬上死|Kyuuketsuki Sugu Shinu",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "title_optional": [
-      "简|CHS|GB",
-      "1080|2160"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
-    "order": 0,
-    "status": "active",
-    "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
-      "09",
-      "10",
-      "11",
       "12",
       "13"
     ]
@@ -355,7 +168,7 @@
   {
     "dir": "逐出勇者队伍",
     "title": [
-      "逐出勇者队伍|Shin no Nakama",
+      "逐出勇者|Shin no Nakama",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
@@ -367,13 +180,6 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
-      "06",
-      "07",
-      "08",
       "09",
       "10",
       "11",
@@ -396,10 +202,51 @@
     "order": 0,
     "status": "active",
     "epsodes": [
-      "02",
-      "03",
-      "04",
-      "05",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "暗杀者转生",
+    "title": [
+      "暗杀者转生|Ansatsu Kizoku",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "迷宫标记者",
+    "title": [
+      "SAKUGAN",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
       "06",
       "07",
       "08",
@@ -411,9 +258,9 @@
     ]
   },
   {
-    "dir": "境界战机",
+    "dir": "终末的后宫",
     "title": [
-      "境界战机|Kyoukai Senki",
+      "终末的后宫|Shuumatsu no Harem",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
@@ -440,9 +287,9 @@
     ]
   },
   {
-    "dir": "平家物语",
+    "dir": "世界尽头的圣骑士",
     "title": [
-      "平家物语|Heike Monogatari",
+      "Saihate no Paladin",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
@@ -454,6 +301,147 @@
     "order": 0,
     "status": "active",
     "epsodes": [
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "古见同学有交流障碍",
+    "title": [
+      "Komi-san wa",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "鬼灭",
+    "title": [
+      "Mugen Ressha|Mugen_Ressha_Hen|Ressha-hen",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "宿命回响",
+    "title": [
+      "takt op",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "09",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "国王",
+    "title": [
+      "国王排名",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "白金终局",
+    "title": [
+      "Platinum End",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+      "13"
+    ]
+  },
+  {
+    "dir": "境界触发者",
+    "title": [
+      "境界觸發者 第三季",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "title_optional": [
+      "简|CHS|GB",
+      "1080|2160"
+    ],
+    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
+    "order": 0,
+    "status": "active",
+    "epsodes": [
+      "01",
+      "02",
+      "03",
+      "04",
       "05",
       "06",
       "07",
