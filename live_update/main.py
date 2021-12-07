@@ -3,6 +3,7 @@ import updater
 import logs
 import sys
 import os
+import traceback
 
 if __name__ == "__main__":
 
@@ -14,7 +15,7 @@ if __name__ == "__main__":
         os._exit(1)
 
 
-    time.sleep(10)
+    time.sleep(3)
 
     module = updater.Updater()
 
@@ -23,6 +24,6 @@ if __name__ == "__main__":
             module.update()
             module.download()
         except Exception as e:
-            logs.error_logger.info(f"[error] {e}")
+            logs.error_logger.info(traceback.format_exc())
         time.sleep(600)
 

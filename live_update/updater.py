@@ -1,6 +1,7 @@
 from subscribe import Subscribe
 import time 
 import os
+import traceback
 import re
 import json 
 import logs 
@@ -56,7 +57,7 @@ class Updater:
                 os.makedirs(self.cache_dir)
 
         except Exception as e:
-            print("[error] init: {}".format(e))
+            print(traceback.format_exc(limit=1))
             os._exit(1)
 
     def update(self):

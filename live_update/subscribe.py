@@ -3,6 +3,7 @@ import os
 import xmlrpc.client
 import json
 import logs
+import traceback
 
 class Subscribe:
     """rules
@@ -54,9 +55,6 @@ class Subscribe:
                     elif rule["status"] == "active":
                         curr_rule.delete(i)         # delete downloaded epsode
 
-            if len(curr_rule.epsodes) == 0 and rule["status"] == "active":
-                rule["status"] = "dead"  # change status
-
             curr_rule.store()         # restore epsode
 
         if self.n_new > 0:
@@ -68,15 +66,16 @@ class Subscribe:
     def download_item(self,item):
         self.n_new += 1
         _, link, subdir, title = item
+        logs.update_logger.info(f"[new] {title}")
         try:
             s = xmlrpc.client.ServerProxy(self.aria2_url)
-            id = s.aria2.addUri([link],{'dir': self.aria2_dir + subdir})
-            aria_status = s.aria2.tellStatus(id)
+            id_ = s.aria2.addUri([link],{'dir': self.aria2_dir + subdir})
+            aria_status = s.aria2.tellStatus(id_)
             logs.update_logger.info(f"[download] {title} dir:{aria_status['dir']}")
             return True
         except Exception as e:
-            logs.error_logger.info(f"[aria2 download fault, will try again] {e}")
-            logs.update_logger.info(f"[new] {title}")
+            logs.error_logger.info(traceback.format_exc(limit=1))
+            logs.error_logger.info(f"[aria2 error] port={self.aria2_url}, will try again]")
             return False
 
     def read_rules(self):

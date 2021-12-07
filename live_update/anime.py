@@ -4,40 +4,66 @@ import datetime
 import logs
 import os
 import time
-
+import traceback
 
 def dmhy(nth:int)->list:
     """
     read nth page
     return list([release_time, release_type, release_title, release_magnet,release_size])
     """
-    new_items = []
-    r=requests.get(f"https://dmhy.org/topics/list/page/{nth}")  # 1, 2, 3 ...
-    table = re.findall(r'<tbody>[\s\S]*</tbody>',r.text)[0]    
+    url = f"https://dmhy.org/topics/list/page/{nth}"   # 1, 2, 3 ...
+    
+    
+    for n_try in range(3):
+        time.sleep(2)
+        try:
+            raw=requests.get(url, timeout = 15).text 
+        except Exception as e:
+            raw = ''
+            logs.error_logger.info(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
+        if len(raw) > 20:
+            break
+
+    tables = re.findall(r'<tbody>[\s\S]*</tbody>',raw)
+    if logs._debug:
+        logs.error_logger.info(f"[debug] requests.get {url} n_try={n_try} r.text={raw} items = {len(tables)}")        
+    if len(tables) == 0:
+        return []
+        
+    table = tables[0]    
     rows = re.findall(r'<tr[\s\S]*?</tr>',table)                          
+    new_items = []
     for i in rows:
-        detail = re.findall(r'<td[\s\S]*?</td>',re.sub(r'[\n\t]','',i))  # cols in a row
-        release_time = re.findall(r'<span.*?>(.*?)</span>',detail[0])[0]
-        release_type = re.sub(r'<.*?>','',detail[1])
-        release_title = re.findall(r'<a.*?>(.*?)</a>',detail[2])[-1]
-        release_title = re.sub(r',','.',release_title)
-        release_magnet = re.findall( r'href="([^"]*)"',detail[3])[0]
-        release_size = re.sub(r'<.*?>','',detail[4])
-        new_items.append([release_time, release_type, release_title, release_magnet,release_size])  
+        try:
+            detail = re.findall(r'<td[\s\S]*?</td>',re.sub(r'[\n\t]','',i))  # cols in a row
+            release_time = re.findall(r'<span.*?>(.*?)</span>',detail[0])[0]
+            release_type = re.sub(r'<.*?>','',detail[1])
+            release_title = re.findall(r'<a.*?>(.*?)</a>',detail[2])[-1]
+            release_title = re.sub(r',','.',release_title)
+            release_magnet = re.findall( r'href="([^"]*)"',detail[3])[0]
+            assert release_magnet[0:6] == 'magnet'
+            release_size = re.sub(r'<.*?>','',detail[4])
+            new_items.append([release_time, release_type, release_title, release_magnet,release_size])  
+        except:
+            logs.error_logger.info(traceback.format_exc())
+            logs.error_logger.info(f"[regex] row: {i}")
     return new_items
 
 
 def get_new_items(n:int)->list:
     """
-    read latest n pages
+    read latest n pages of multiple sources
+    return:
+        [release_time, release_type, release_title, release_magnet,release_size]
     """
     new_items = []
     for i in range(n):
-        if logs._debug:
-            logs.error_logger.info(f"read page {i} ...")
         new_items += dmhy(i+1)
         time.sleep(2)
     return new_items
+
+
+################################################################################################
 
 
 class Anime:
@@ -48,7 +74,7 @@ class Anime:
     def __init__(self, cache_dir:str):
         self.cache_dir = cache_dir 
 
-    def update(self):
+    def update(self) -> None:
         """
         new_items: [release_time, release_type, release_title, release_magnet,release_size]
         """
@@ -63,10 +89,9 @@ class Anime:
         new_items = []
         try:
             new_items = get_new_items(n_pages)    # read n pages
-            with open(file_prev, 'a+', encoding='utf8') as f:
-                pass                              # make an empty file
+            with open(file_prev, 'a+', encoding='utf8') as f: pass       # make an empty file
         except Exception as e:
-            logs.error_logger.info(f"[error get_new_items] {e}")
+            logs.error_logger.info(traceback.format_exc())
 
         new_items_vaild = []
         for i in reversed(new_items):
@@ -77,7 +102,7 @@ class Anime:
                 f.write(','.join(i)+'\n\n')    # update cache
 
         self.new_anime = new_items_vaild       # how many valid new items
-        logs.error_logger.info(f"[new] {len(self.new_anime)} items")
+        logs.error_logger.info(f"[new] cache {len(self.new_anime)} items")
 
     def find_record(self, file_curr:str)->set:
         """
