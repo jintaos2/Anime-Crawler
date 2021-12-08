@@ -5,7 +5,7 @@ import traceback
 import re
 import json 
 import logs 
-from anime import Anime
+from anime import Anime, __sources__
 from subscribe import Subscribe
 
 # output:  c:/a/b/
@@ -21,7 +21,7 @@ class Updater:
         # see anime.py
         self.anime = Anime(self.cache_dir)
         # see subscribe.py
-        self.downloader = Subscribe(self.list_path, self.cache_dir, self.aria2_url, self.aria2_dir)
+        self.downloader = Subscribe(self.list_path, self.cache_dir, __sources__.keys(), self.aria2_url, self.aria2_dir)
 
     def load_config(self):
         self.main_dir = path_format(os.path.abspath(os.path.dirname(__file__)))
@@ -35,7 +35,7 @@ class Updater:
                 self.log_dir = self.main_dir + self.log_dir
             if not os.path.isdir(self.log_dir):
                 raise Exception("log dir not exist!") 
-            print(f"log directory is: {self.log_dir}")
+            print(f"[init] log directory is: {self.log_dir}")
 
             # aria2 parameter
             self.aria2_dir = path_format(config["download_dir"])

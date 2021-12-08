@@ -25,5 +25,5 @@ if __name__ == "__main__":
             module.download()
         except Exception as e:
             logs.error_logger.info(traceback.format_exc())
-        time.sleep(600)
+        time.sleep(900)
 

@@ -17,11 +17,12 @@ class Subscribe:
         "epsodes": [ "12", "13" ]
     }]
     """
-    def __init__(self, list_file:str, cache_dir:str, aria2_url:str, aria2_dir:str):
-        self.list_file = list_file
-        self.cache_dir = cache_dir
-        self.aria2_url = aria2_url
-        self.aria2_dir = aria2_dir
+    def __init__(self, list_file:str, cache_dir:str, sources:list, aria2_url:str, aria2_dir:str):
+        self.list_file = list_file  # './log/mylist.json'
+        self.cache_dir = cache_dir  # './log/cache/'
+        self.sources = sources      # ['dmhy','dmhy2']
+        self.aria2_url = aria2_url  # "http://127.0.0.1:6800/rpc"
+        self.aria2_dir = aria2_dir  # "E:/anime"
   
         self.items = []    # new items 
         self.rules = []    # new rules
@@ -72,6 +73,7 @@ class Subscribe:
             id_ = s.aria2.addUri([link],{'dir': self.aria2_dir + subdir})
             aria_status = s.aria2.tellStatus(id_)
             logs.update_logger.info(f"[download] {title} dir:{aria_status['dir']}")
+            logs.error_logger.info(f"[download] {title} dir:{aria_status['dir']}")
             return True
         except Exception as e:
             logs.error_logger.info(traceback.format_exc(limit=1))
@@ -91,10 +93,13 @@ class Subscribe:
         except Exception as e:
             logs.error_logger.info(f"[error] write_rules: {e}") 
     def read_history(self, days:int):
-        files = [i for i in sorted(os.listdir(self.cache_dir), reverse=True) if len(i)==14][0:days]
+        filepaths: list = []
+        for name in self.sources:
+            cache = self.cache_dir + name + '/'
+            filepaths += [cache+i for i in sorted(os.listdir(cache), reverse=True) if len(i)==14][0:days]
         self.items = []
-        for file in files:
-            with open(self.cache_dir + file, 'r', encoding='utf8') as f:
+        for filepath in filepaths:
+            with open(filepath, 'r', encoding='utf8') as f:
                 lines = [i.split(',') for i in f.readlines()]
                 vaild = [i for i in lines if len(i) > 3 and i[3] != '']
                 self.items += vaild
