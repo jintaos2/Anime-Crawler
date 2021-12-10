@@ -29,35 +29,28 @@ class Subscribe:
 
     def download(self):    
         self.read_rules()  # odd rules
-        self.read_history(12)  # cached items
+        self.read_history(10)  # cached items
         self.n_new = 0    # number of new mached items
 
         for rule in self.rules:
             curr_rule = Rule(rule)
 
-            if rule["status"] == "dead":  # no need to match
-                continue
             results = {}                        # {epsode: [(score, link, dir, title), (score, link, dir, title)]}
             for item in self.items:             # [release_time, release_type, release_title, release_magnet,release_size]
                 epsode, score = curr_rule.match(item)
-                if epsode == -1:
-                    continue
-                if not epsode in results:
-                    results[epsode] = []
+                if epsode == -1: continue
+                if epsode not in results: results[epsode] = []
                 results[epsode].append((score, item[3], rule["dir"], item[2]))  #  item match!
-            for i in results.keys():                        # download per epsode
-                results_per_epsode = results[i]
+            for epsode, results_per_epsode in results.keys():         # download per epsode
                 results_per_epsode.sort(key = lambda x: x[0], reverse=True)
                 idx = rule["order"]
                 idx = idx if idx < len(results_per_epsode) else -1
-                if self.download_item(results_per_epsode[idx]):  # download by order
-                    if rule["status"] == "once":    # change status
-                        rule["status"] = "dead"
-                    elif rule["status"] == "active":
-                        curr_rule.delete(i)         # delete downloaded epsode
+                if self.download_item(results_per_epsode[idx]):     # download by order
+                    curr_rule.delete(epsode)                        # delete downloaded epsode
+                    
+            curr_rule.store()                   # restore epsode
 
-            curr_rule.store()         # restore epsode
-
+        logs.error_logger.info(f"[new] {self.n_new} items match the rule")
         if self.n_new > 0:
             logs.update_logger.info("----------------------------")
         self.write_rules()
@@ -76,8 +69,8 @@ class Subscribe:
             logs.error_logger.info(f"[download] {title} dir:{aria_status['dir']}")
             return True
         except Exception as e:
-            logs.error_logger.info(traceback.format_exc(limit=1))
             logs.error_logger.info(f"[aria2 error] port={self.aria2_url}, will try again]")
+            logs.error_logger.info(traceback.format_exc(limit=1))
             return False
 
     def read_rules(self):
@@ -99,50 +92,83 @@ class Subscribe:
             filepaths += [cache+i for i in sorted(os.listdir(cache), reverse=True) if len(i)==14][0:days]
         self.items = []
         for filepath in filepaths:
-            with open(filepath, 'r', encoding='utf8') as f:
-                lines = [i.split(',') for i in f.readlines()]
-                vaild = [i for i in lines if len(i) > 3 and i[3] != '']
-                self.items += vaild
+            valid = []
+            with open(filepath, 'r', encoding='utf-8') as f:
+                lines = [i.split(',') for i in f.readlines() if i != '\n']
+                for i in lines:
+                    if len(i) < 4: continue
+                    if len(i) > 5: logs.error_logger.info(f'[read cache] unexpected items: {i}')
+                    magnet = i[3]
+                    if magnet[:8] == 'magnet:?': valid.append(i)
+            self.items += valid
         return self.items
 
 
 class Rule():
     def __init__(self, rules:dict):
         self.rules = rules
-        self.title_must = [re.compile(i, re.I) for i in rules["title"]]      # ["进击的巨人|進擊的巨|Shingeki no Kyojin", "動畫"]
-        self.title_optional = [re.compile(i, re.I) for i in rules["title_optional"]] # ["简|CHS|GB", "1080"]
-        self.epsode_filter = re.compile(rules["epsode_filter"])                      # "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]"
-        self.epsodes = []
-        epsodes_ = rules["epsodes"]   # ["01", "02", "03-08"] -> [1,2,3,4,5,6,7,8]
-        for i in epsodes_:    
+        
+        self.title_must = [re.compile(i, re.I) for i in rules["title"]]                 # ["进击的巨人|進擊的巨|Shingeki no Kyojin", "動畫"]
+        
+        if "title_optional" not in rules:
+            self.title_optional = [ "简|CHS|GB", "1080|2160"]
+        else:
+            self.title_optional = rules["title_optional"]
+        self.title_optional = [re.compile(i, re.I) for i in self.title_optional]        
+        
+        self.epsode_filter = re.compile(r'[^a-zA-Z0-9](\d\d)[^a-zA-Z0-9]')              # "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]"
+        self.epsodes:set = self.epsode_str2int(rules["epsodes"] )
+
+                
+    def epsode_str2int(self,a:list) -> set: # ["01", "02", "003-08"] -> [1,2,3,4,5,6,7,8]
+        ret: list = []
+        for i in a:    
             ii = i.split('-')
             if len(ii) == 1:
-                self.epsodes.append(int(i))
+                ret.append(int(i))
             elif len(ii) == 2:
-                self.epsodes += list(range(int(ii[0]),int(ii[1])+1))
+                ret += list(range(int(ii[0]),int(ii[1])+1))
+        return set(ret)        
+    
+    def epsode_int2str(self,a:set) -> list:    # {1,2,3,5,6,7,8} -> ["01-03", "05-08"]
+        
+        def subset(a:set) -> str:
+            '''pop int from a, reuturn str 
+            '''
+            start = a.pop()
+            end = start 
+            while end + 1 in a:
+                end = a.pop()
+            if start == end:
+                return str(end)
+            else:
+                return str(start) + '-' + str(end)
+        ret = []
+        while a:
+            ret.append(subset(a))
+        return ret
 
     def match(self, item: list):
         """
         input:  [release_time, release_type, release_title, release_magnet,release_size]
-        output: epsode , score
+        output: 
+            epsode: -1 means no match 
+            score
         """
         title = item[1] + item[2]
+        if 'Komyushou' in title and '古见' in self.rules['dir']:
+            print(items)
+        # logs.error_logger.info(title)
         for regex in self.title_must:
             if not regex.search(title):
                 return -1, 0     # title not match 
 
-        if self.rules["status"] == "once":  # epsode does not matter 
-            epsode = 0
-        else:
-            epsode_ = self.epsode_filter.findall(title)
-            if len(epsode_) > 0 and re.match(r'\d+', epsode_[-1]):
-                epsode = int(epsode_[-1])
-                if epsode not in self.epsodes:
-                    return -1, 0 # epsode not match 
-            else:
-                return -1, 0     # epsode not match 
-
-        # epsode match
+        epsode_ = self.epsode_filter.findall(title)
+        if len(epsode_) > 0 and re.match(r'\d+', epsode_[-1]):
+            epsode = int(epsode_[-1])
+            if epsode not in self.epsodes:
+                return -1, 0     # epsode not match    
+             
         score = 0
         for regex in self.title_optional:
             if regex.search(title):
@@ -150,11 +176,7 @@ class Rule():
         return epsode, score
 
     def delete(self, epsode:int):
-        while epsode in self.epsodes:   # avoid repeat
-            self.epsodes.remove(epsode)
-                 
-    def int2str(self,n):
-        return '0{}'.format(n) if n < 10 else '{}'.format(n)
+        self.epsodes.remove(epsode)
 
     def store(self):
-        self.rules["epsodes"] = [self.int2str(i) for i in self.epsodes]
+        self.rules["epsodes"] = self.epsode_int2str(self.epsodes)

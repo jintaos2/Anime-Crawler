@@ -9,6 +9,7 @@ import json
 
 __sources__ = {}
 
+
 def dmhy(nth:int)->list:
     """
     read nth page
@@ -54,12 +55,6 @@ def dmhy(nth:int)->list:
 
 
 def dmhy2(nth:int)->list:
-    ''' 
-    nth:
-        1,2,3, ...
-    return:
-        list([release_time, release_type, release_title, release_magnet,release_size])
-    '''
     main_url = 'https://dongmanhuayuan.myheartsite.com/api/acg/search'
     try:
         r = requests.post(main_url, data={'page':str(nth)})
@@ -91,11 +86,13 @@ def dmhy2(nth:int)->list:
                 r = r['data']['magnetLink1']    
                 return r 
             except:
-                logs.error_logger.info(f"[error n_try={i}] requests.post url={url}, \ndata={data}, \ntitle={release_title}\n{traceback.format_exc(1)}")
+                if logs._debug:
+                    logs.error_logger.info(f"[post error n_try={i}] url={url}, \ndata={data}, \ntitle={release_title}\n{traceback.format_exc(1)}")
+                else:
+                    logs.error_logger.info(f"[post error n_try={i}] {release_title}")
                 time.sleep(i*2+5.5)
         return None
                
-
     new_items = []
     for items_raw in r:
         release_time = items_raw['date']
@@ -112,6 +109,8 @@ __sources__['dmhy2'] = dmhy2
 
 
 
+################################################################################################
+################################################################################################
 ################################################################################################
 
 
@@ -137,27 +136,28 @@ class Anime:
         # ex. 2021-06-17.txt
         file_curr = f'{cache}{curr_date}.txt'
         file_prev = f'{cache}{prev_date}.txt'
-        odd_items: dict = self.find_record(file_prev)
-        odd_items.update(self.find_record(file_curr))  
+        odd_items: set = self.find_record(file_prev) | self.find_record(file_curr)
+        
         new_items: list = []
-        for i in range(2 if not os.path.isfile(file_prev) else 1):
+        for i in range(3 if not os.path.isfile(file_prev) else 1):
             try:
                 new_page: list = __sources__[name](i+1)
             except:
                 logs.error_logger.info(traceback.format_exc())
                 new_page = []
             new_items += new_page
-            time.sleep(2) 
-        n_new = 0
+            time.sleep(1) 
+            
+        valid_items: list = []
         for i in reversed(new_items):
-            if not i[3] in odd_items:            # check whether items are cached 
-                odd_items[i[3]] = i
-                n_new += 1
+            i[2] = re.sub(r'\n|,', '', i[2])    # replace ',' and '\n' in title
+            magnet = i[3]
+            if magnet[:8] == 'magnet:?' and i[3] not in odd_items:      # check whether items are cached 
+                valid_items.append(i)
         with open(file_curr, 'a+', encoding='utf8') as f:
-            for i in odd_items.values():
+            for i in valid_items:
                 f.write(','.join(i)+'\n\n')     # update cache
-
-        return n_new                            # how many valid new items
+        return len(valid_items)                 # how many valid new items
         
         
     def update(self) -> None:
@@ -165,7 +165,7 @@ class Anime:
             n = self.update_source(name)
             logs.error_logger.info(f"[new] {name} cached {n} items")        
 
-    def find_record(self, file_curr:str)->dict:
+    def find_record(self, file_curr:str)->set:
         """
         input: 
             file name 
@@ -176,17 +176,18 @@ class Anime:
         """
         if os.path.isfile(file_curr):
             try:  # magnet links exists
-                with open(file_curr,'r',encoding='utf8') as f:
-                    lines = [i.split(',') for i in f.readlines()]
-                    valid = {}
-                    for i in lines:
-                        if len(i) < 4: continue
-                        magnet = i[3]
-                        if len(magnet) > 8 and magnet[:8] == 'magnet:?':
-                            valid[magnet] = i
-                    if logs._debug:
-                        print(valid)       
-                    return valid
+                f = open(file_curr,'r',encoding='utf8')
+                lines = [i.split(',') for i in f.readlines()]
+                f.close()
+                
+                valid = set()
+                for i in lines:
+                    if len(i) < 4: continue
+                    magnet = i[3]
+                    if magnet[:8] == 'magnet:?':
+                        valid.add(magnet)     
+                return valid
+            
             except Exception as e:
                 logs.error_logger.info(f"[read odd cache {file_curr} error]{e}")
-        return {}
+        return set()

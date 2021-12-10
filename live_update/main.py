@@ -15,14 +15,19 @@ if __name__ == "__main__":
         os._exit(1)
 
 
-    time.sleep(3)
+    time.sleep(1)
 
     module = updater.Updater()
 
     while True:
+        curr_time = time.time()
         try:
+            logs.error_logger.info("++++ crawling web pages")
             module.update()
+            logs.error_logger.info(f"--- cost:{time.time() - curr_time} matching rules")
+            curr_time = time.time()
             module.download()
+            logs.error_logger.info(f"... cost:{time.time() - curr_time} done")
         except Exception as e:
             logs.error_logger.info(traceback.format_exc())
         time.sleep(900)
