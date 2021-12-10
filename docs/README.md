@@ -1,8 +1,9 @@
 ### Introducton 
 
-自用动漫爬虫，每隔10分钟爬取 dmhy.org 首页并跟新本地缓存，自动匹配番剧，自动 aria2c 下载。还包含全局动漫搜索和纪录片爬取的 jupyter notebook.
+自用动漫爬虫，每隔10分钟爬取 dmhy.org 及其镜像站首页并跟新本地缓存，自动匹配番剧，自动 aria2c 下载。
+每季度更新自用动漫列表
 
-##### 环境　
+### Environment　
 
 - aria2c
 - python3
@@ -44,34 +45,33 @@ run: `python main.py`
 番剧列表: `./log/mylist.json`
 
 ```json
-[ {
-    "dir": "境界战机",
+[  
+  {
+    "dir": "86-不存在的战区",
     "title": [
-      "境界战机|Kyoukai Senki",
+      "不存在的战区|EIGHTY SIX",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
-    "title_optional": [
-      "简|CHS|GB",
-      "1080|2160"
-    ],
-    "epsode_filter": "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]",
     "order": 0,
-    "status": "active",
     "epsodes": [
-      "01-13"
+      "20-24"
     ]
-}]
+  },
+  {
+    "dir": "看得见的女孩",
+    "title": [
+      "看得见的女孩|Mieruko-chan",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "11-13"
+    ]
+  }
+]
 ```
-
-### dmhy_update_all.ipynb 
-
-1. 指定页数，爬取 dmhy 历史数据，按月存在本地。如果本地没有缓存，先爬老的数据，再爬新的数据，反之顺序将出错。
-2. 指定上述规则，搜索历史番剧，自动下载。 
-
-### docuwiki_update_all.ipynb 
-
-爬取 docuwiki.net 上按年分类记录片，每次新增记录会再次保持在另一文件。爬取内容为标题和 ed2k 链接
 
 
 

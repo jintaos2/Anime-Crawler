@@ -156,9 +156,6 @@ class Rule():
             score
         """
         title = item[1] + item[2]
-        if 'Komyushou' in title and '古见' in self.rules['dir']:
-            print(items)
-        # logs.error_logger.info(title)
         for regex in self.title_must:
             if not regex.search(title):
                 return -1, 0     # title not match 
