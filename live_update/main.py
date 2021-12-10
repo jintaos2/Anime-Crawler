@@ -24,10 +24,10 @@ if __name__ == "__main__":
         try:
             logs.error_logger.info("++++++++++++++++++++++++++++++++++++++")
             module.update()
-            logs.error_logger.info(f"---crawl webs cost:{time.time() - curr_time} seconds")
+            logs.error_logger.info(f"------ crawl cost:{time.time() - curr_time} seconds")
             curr_time = time.time()
             module.download()
-            logs.error_logger.info(f"--- match rules cost:{time.time() - curr_time} seconds")
+            logs.error_logger.info(f"------ match cost:{time.time() - curr_time} seconds")
         except Exception as e:
             logs.error_logger.info(traceback.format_exc())
         time.sleep(900)

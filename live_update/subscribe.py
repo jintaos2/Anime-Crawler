@@ -41,7 +41,7 @@ class Subscribe:
                 if epsode == -1: continue
                 if epsode not in results: results[epsode] = []
                 results[epsode].append((score, item[3], rule["dir"], item[2]))  #  item match!
-            for epsode, results_per_epsode in results.keys():         # download per epsode
+            for epsode, results_per_epsode in results.items():         # download per epsode
                 results_per_epsode.sort(key = lambda x: x[0], reverse=True)
                 idx = rule["order"]
                 idx = idx if idx < len(results_per_epsode) else -1
