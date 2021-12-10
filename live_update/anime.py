@@ -91,9 +91,8 @@ def dmhy2(nth:int)->list:
                 r = r['data']['magnetLink1']    
                 return r 
             except:
-                logs.error_logger.info(f"[error] requests.post url={url}, data={data}, title={release_title} n_try={i} no response")
-                logs.error_logger.info(traceback.format_exc(1))
-                time.sleep(i+5.5)
+                logs.error_logger.info(f"[error n_try={i}] requests.post url={url}, \ndata={data}, \ntitle={release_title}\n{traceback.format_exc(1)}")
+                time.sleep(i*2+5.5)
         return None
                
 
@@ -111,17 +110,6 @@ def dmhy2(nth:int)->list:
     return new_items
 __sources__['dmhy2'] = dmhy2
 
-def get_new_items(n:int)->list:
-    """
-    read latest n pages of multiple sources
-    return:
-        [release_time, release_type, release_title, release_magnet,release_size]
-    """
-    new_items = []
-    for i in range(n):
-        new_items += dmhy(i+1)
-        time.sleep(2)
-    return new_items
 
 
 ################################################################################################
@@ -149,10 +137,10 @@ class Anime:
         # ex. 2021-06-17.txt
         file_curr = f'{cache}{curr_date}.txt'
         file_prev = f'{cache}{prev_date}.txt'
-        odd_list: set = self.find_record(file_prev) | self.find_record(file_curr)
-        n_pages: int = 2 if not os.path.isfile(file_prev) else 1
+        odd_items: dict = self.find_record(file_prev)
+        odd_items.update(self.find_record(file_curr))  
         new_items: list = []
-        for i in range(n_pages):
+        for i in range(2 if not os.path.isfile(file_prev) else 1):
             try:
                 new_page: list = __sources__[name](i+1)
             except:
@@ -160,15 +148,16 @@ class Anime:
                 new_page = []
             new_items += new_page
             time.sleep(2) 
-        new_items_vaild = []
+        n_new = 0
         for i in reversed(new_items):
-            if not i[3] in odd_list:            # check whether items are cached 
-                new_items_vaild.append(i)
+            if not i[3] in odd_items:            # check whether items are cached 
+                odd_items[i[3]] = i
+                n_new += 1
         with open(file_curr, 'a+', encoding='utf8') as f:
-            for i in new_items_vaild:
+            for i in odd_items.values():
                 f.write(','.join(i)+'\n\n')     # update cache
 
-        return len(new_items_vaild)             # how many valid new items
+        return n_new                            # how many valid new items
         
         
     def update(self) -> None:
@@ -176,7 +165,7 @@ class Anime:
             n = self.update_source(name)
             logs.error_logger.info(f"[new] {name} cached {n} items")        
 
-    def find_record(self, file_curr:str)->set:
+    def find_record(self, file_curr:str)->dict:
         """
         input: 
             file name 
@@ -189,8 +178,15 @@ class Anime:
             try:  # magnet links exists
                 with open(file_curr,'r',encoding='utf8') as f:
                     lines = [i.split(',') for i in f.readlines()]
-                    vaild = [i[3] for i in lines if len(i) > 3 and i[3] != '']
-                    return set(vaild)
+                    valid = {}
+                    for i in lines:
+                        if len(i) < 4: continue
+                        magnet = i[3]
+                        if len(magnet) > 8 and magnet[:8] == 'magnet:?':
+                            valid[magnet] = i
+                    if logs._debug:
+                        print(valid)       
+                    return valid
             except Exception as e:
                 logs.error_logger.info(f"[read odd cache {file_curr} error]{e}")
-        return set()
+        return {}
