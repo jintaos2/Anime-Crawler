@@ -87,9 +87,9 @@ def dmhy2(nth:int)->list:
                 return r 
             except:
                 if logs._debug:
-                    logs.error_logger.info(f"[post error n_try={i}] url={url}, \ndata={data}, \ntitle={release_title}\n{traceback.format_exc(1)}")
+                    logs.error_logger.info(f"[error post n_try={i}] url={url}, \ndata={data}, \ntitle={release_title}\n{traceback.format_exc(1)}")
                 else:
-                    logs.error_logger.info(f"[post error n_try={i}] {release_title}")
+                    logs.error_logger.info(f"[error post n_try={i}] {release_title}")
                 time.sleep(i*2+5.5)
         return None
                

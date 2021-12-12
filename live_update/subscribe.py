@@ -165,7 +165,10 @@ class Rule():
             epsode = int(epsode_[-1])
             if epsode not in self.epsodes:
                 return -1, 0     # epsode not match    
-             
+        else:
+            logs.error_logger.info(f"[error filter epsode] {title}")
+            return -1, 0     
+        
         score = 0
         for regex in self.title_optional:
             if regex.search(title):
