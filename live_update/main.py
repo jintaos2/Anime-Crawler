@@ -15,7 +15,7 @@ if __name__ == "__main__":
         os._exit(1)
 
 
-    time.sleep(1)
+    time.sleep(0.1)
 
     module = updater.Updater()
 
@@ -30,5 +30,9 @@ if __name__ == "__main__":
             logs.error_logger.info(f"------ match cost:{time.time() - curr_time} seconds")
         except Exception as e:
             logs.error_logger.info(traceback.format_exc())
-        time.sleep(900)
+        t = 15
+        p = t*60/3
+        for i in range(3):
+            logs.error_logger.info(f'waiting, rest {t-p*i/60} minutes')
+            time.sleep(p)
 

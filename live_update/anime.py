@@ -8,6 +8,39 @@ import traceback
 import json
 
 __sources__ = {}
+proxies={'https':'http://127.0.0.1:7890'}
+# proxies=None
+
+def nyaa(nth:int)->list:
+    url = f"https://nyaa.si/?p={nth}"   # 1, 2, 3 ...
+    for n_try in range(3):
+        time.sleep(1)
+        try:
+            raw= requests.get(url, proxies=proxies, timeout=15).text
+        except Exception as e:
+            raw = ''
+            logs.error_logger.info(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
+        if len(raw) > 20:
+            break
+    tables = re.findall(r'<tbody>[\s\S]*</tbody>',raw)
+    table = tables[0]    
+    rows = re.findall(r'<tr[\s\S]*?</tr>',table)   
+    new_items = []
+    for i in rows:
+        if 'Anime - Non' in i and re.search(r"简|CHS|GB|繁|CHT|BIG5", i):
+            try:
+                detail = re.findall(r'<td[\s\S]*?</td>',re.sub(r'[\n\t]','',i))  # cols in a row
+                release_type = re.findall(r'alt="(.*?)"', detail[0])[-1]
+                release_title = re.findall(r'<a.*?>(.*?)</a>', detail[1])[-1]
+                release_magnet = re.findall( r'href="([^"]*)"',detail[2])[-1]
+                release_size = re.findall(r'>(.*?)<',detail[3])[-1]
+                release_time = re.findall(r'>(.*?)<',detail[4])[-1]
+                new_items.append([release_time, release_type, release_title, release_magnet,release_size])  
+            except:
+                logs.error_logger.info(traceback.format_exc())
+                logs.error_logger.info(f"[regex] row: {i}")            
+    return new_items
+__sources__['nyaa'] = nyaa
 
 
 def dmhy(nth:int)->list:
@@ -15,12 +48,12 @@ def dmhy(nth:int)->list:
     read nth page
     return list([release_time, release_type, release_title, release_magnet,release_size])
     """
-    url = f"https://dmhy.org/topics/list/page/{nth}"   # 1, 2, 3 ...
+    url = f"https://dmhy.anoneko.com/topics/list/page/{nth}"   # 1, 2, 3 ...
     
     for n_try in range(3):
-        time.sleep(2)
+        time.sleep(1)
         try:
-            raw=requests.get(url, timeout = 15).text 
+            raw=requests.get(url, proxies=proxies, timeout = 15).text 
         except Exception as e:
             raw = ''
             logs.error_logger.info(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
@@ -51,13 +84,13 @@ def dmhy(nth:int)->list:
             logs.error_logger.info(traceback.format_exc())
             logs.error_logger.info(f"[regex] row: {i}")
     return new_items
-# __sources__['dmhy'] = dmhy
+__sources__['dmhy'] = dmhy
 
 
 def dmhy2(nth:int)->list:
     main_url = 'https://dongmanhuayuan.myheartsite.com/api/acg/search'
     try:
-        r = requests.post(main_url, data={'page':str(nth)})
+        r = requests.post(main_url, proxies=proxies, data={'page':str(nth)}, timeout=15)
         r = json.loads(str(r.content, encoding='utf8'))
         r:list = r['data']['searchData']
         """ 
@@ -75,22 +108,23 @@ def dmhy2(nth:int)->list:
         return []
 
     def post_item(_id:int, _link:str, title:str="") -> str:
-        time.sleep(0.4)
+        time.sleep(0.6)
         url = 'https://dongmanhuayuan.myheartsite.com/api/acg/detail'
         data = {'link':_link, 'id':_id}
-        for i in range(100):
+        for i in range(6):
             try:
-                r = requests.post(url, data=data) 
+                r = requests.post(url, proxies=proxies, data=data, timeout=15) 
                 r = str(r.content, encoding='utf8')
                 r = json.loads(r)
                 r = r['data']['magnetLink1']    
+                assert r[:8] == 'magnet:?'
                 return r 
             except:
                 if logs._debug:
                     logs.error_logger.info(f"[error post n_try={i}] url={url}, \ndata={data}, \ntitle={release_title}\n{traceback.format_exc(1)}")
                 else:
                     logs.error_logger.info(f"[error post n_try={i}] {release_title}")
-                time.sleep(i*2+5.5)
+                time.sleep(i*2+2.5)
         return None
                
     new_items = []
@@ -105,7 +139,7 @@ def dmhy2(nth:int)->list:
         if release_magnet is None: continue 
         new_items.append([release_time, release_type, release_title, release_magnet,release_size])
     return new_items
-__sources__['dmhy2'] = dmhy2
+# __sources__['dmhy2'] = dmhy2
 
 
 
@@ -157,6 +191,10 @@ class Anime:
         with open(file_curr, 'a+', encoding='utf8') as f:
             for i in valid_items:
                 f.write(','.join(i)+'\n\n')     # update cache
+                
+        if logs._debug:
+            self.new_items = new_items 
+            self.valid_items = valid_items
         return len(valid_items)                 # how many valid new items
         
         

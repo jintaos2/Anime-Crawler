@@ -132,7 +132,7 @@ class Rule():
     
     def epsode_int2str(self,a:set) -> list:    # {1,2,3,5,6,7,8} -> ["01-03", "05-08"]
         
-        def subset(a:set) -> str:
+        def subset(a:list) -> str:
             '''pop int from a, reuturn str 
             '''
             start = a.pop()
@@ -144,6 +144,8 @@ class Rule():
             else:
                 return str(start) + '-' + str(end)
         ret = []
+        a = list(a)
+        a.sort(reverse=True)
         while a:
             ret.append(subset(a))
         return ret
@@ -159,7 +161,6 @@ class Rule():
         for regex in self.title_must:
             if not regex.search(title):
                 return -1, 0     # title not match 
-
         epsode_ = self.epsode_filter.findall(title)
         if len(epsode_) > 0 and re.match(r'\d+', epsode_[-1]):
             epsode = int(epsode_[-1])
