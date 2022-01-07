@@ -1,77 +1,5 @@
 [
   {
-    "dir": "白沙的水族馆",
-    "title": [
-      "白沙的水族馆|Shiroi Suna",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "25-26"
-    ]
-  },
-  {
-    "dir": "贾希大人不气馁",
-    "title": [
-      "贾希大人不气馁|Jahy-sama",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "21-24"
-    ]
-  },
-  {
-    "dir": "蓝色时期",
-    "title": [
-      "蓝色时期|Blue Period",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "13"
-    ]
-  },
-  {
-    "dir": "86-不存在的战区",
-    "title": [
-      "不存在的战区|EIGHTY SIX",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "21-24"
-    ]
-  },
-  {
-    "dir": "看得见的女孩",
-    "title": [
-      "看得见的女孩|Mieruko-chan",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "12-13"
-    ]
-  },
-  {
-    "dir": "月与莱卡与吸血姬",
-    "title": [
-      "月与莱卡与吸血姬|Tsuki to Laika",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "12-13"
-    ]
-  },
-  {
     "dir": "无职转生",
     "title": [
       "无职转生|Mushoku Tensei",
@@ -84,30 +12,6 @@
     ]
   },
   {
-    "dir": "星期一",
-    "title": [
-      "星期一|Tawawa On MondayS",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "13"
-    ]
-  },
-  {
-    "dir": "逐出勇者队伍",
-    "title": [
-      "逐出勇者|Shin no Nakama",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "12-13"
-    ]
-  },
-  {
     "dir": "逆转世界的电池少女",
     "title": [
       "逆转世界的电池少女|Gyakuten Sekai|RUMBLE GARANNDOLL",
@@ -116,7 +20,7 @@
     ],
     "order": 0,
     "epsodes": [
-      "11-13"
+      "13"
     ]
   },
   {
@@ -128,19 +32,7 @@
     ],
     "order": 0,
     "epsodes": [
-      "12-13"
-    ]
-  },
-  {
-    "dir": "迷宫标记者",
-    "title": [
-      "SAKUGAN",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "6-13"
+      "13"
     ]
   },
   {
@@ -164,19 +56,7 @@
     ],
     "order": 0,
     "epsodes": [
-      "11-13"
-    ]
-  },
-  {
-    "dir": "古见同学有交流障碍",
-    "title": [
-      "Komi-san wa|Komyushou Desu",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "12-13"
+      "13"
     ]
   },
   {
@@ -188,7 +68,7 @@
     ],
     "order": 0,
     "epsodes": [
-      "4-13"
+      "6-13"
     ]
   },
   {
@@ -200,7 +80,7 @@
     ],
     "order": 0,
     "epsodes": [
-      "12-13"
+      "13"
     ]
   },
   {
@@ -212,32 +92,19 @@
     ],
     "order": 0,
     "epsodes": [
-      "7-13"
+      "8-13"
     ]
   },
   {
-    "dir": "白金终局",
+    "dir": "凡人修仙传",
     "title": [
-      "Platinum End",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
+      "凡人修仙传|Journey To Immortality",
+      "動畫"
     ],
     "order": 0,
     "epsodes": [
-      "11-13"
-    ]
-  },
-  {
-    "dir": "境界触发者",
-    "title": [
-      "境界觸發者 第三季",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "1-3",
-      "5-13"
+      "29",
+      "32-50"
     ]
   }
 ]

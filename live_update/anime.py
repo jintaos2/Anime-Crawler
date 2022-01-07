@@ -8,8 +8,8 @@ import traceback
 import json
 
 __sources__ = {}
-proxies={'https':'http://127.0.0.1:7890'}
-# proxies=None
+# proxies={'https':'http://127.0.0.1:7890'}
+proxies=None
 
 def nyaa(nth:int)->list:
     url = f"https://nyaa.si/?p={nth}"   # 1, 2, 3 ...
@@ -48,7 +48,7 @@ def dmhy(nth:int)->list:
     read nth page
     return list([release_time, release_type, release_title, release_magnet,release_size])
     """
-    url = f"https://dmhy.anoneko.com/topics/list/page/{nth}"   # 1, 2, 3 ...
+    url = f"https://www.dmhy.org/topics/list/page/{nth}"   # 1, 2, 3 ...
     
     for n_try in range(3):
         time.sleep(1)
