@@ -1,12 +1,11 @@
-from subscribe import Subscribe
 import time 
 import os
 import traceback
 import re
 import json 
-import logs 
-from anime import Anime, __sources__
-from subscribe import Subscribe
+from . import logs 
+from .anime import Anime, __sources__
+from .subscribe import Subscribe
 
 # output:  c:/a/b/
 def path_format(a:str):
@@ -63,5 +62,5 @@ class Updater:
     def update(self):
         self.anime.update()
 
-    def download(self):
-        self.downloader.download() 
+    def download(self, N = 10):
+        self.downloader.download(N) 

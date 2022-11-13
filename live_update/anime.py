@@ -1,15 +1,16 @@
 import requests
 import re
 import datetime
-import logs
+from . import logs
 import os
 import time
 import traceback
 import json
 
 __sources__ = {}
-# proxies={'https':'http://127.0.0.1:7890'}
+# proxies={'https':'http://localhost:7890'}
 proxies=None
+n_pages = 3
 
 def nyaa(nth:int)->list:
     url = f"https://nyaa.si/?p={nth}"   # 1, 2, 3 ...
@@ -23,6 +24,8 @@ def nyaa(nth:int)->list:
         if len(raw) > 20:
             break
     tables = re.findall(r'<tbody>[\s\S]*</tbody>',raw)
+    if len(tables) == 0:
+        return []
     table = tables[0]    
     rows = re.findall(r'<tr[\s\S]*?</tr>',table)   
     new_items = []
@@ -40,7 +43,7 @@ def nyaa(nth:int)->list:
                 logs.error_logger.info(traceback.format_exc())
                 logs.error_logger.info(f"[regex] row: {i}")            
     return new_items
-__sources__['nyaa'] = nyaa
+# __sources__['nyaa'] = nyaa
 
 
 def dmhy(nth:int)->list:
@@ -85,6 +88,8 @@ def dmhy(nth:int)->list:
             logs.error_logger.info(f"[regex] row: {i}")
     return new_items
 __sources__['dmhy'] = dmhy
+
+
 
 
 def dmhy2(nth:int)->list:
@@ -173,7 +178,7 @@ class Anime:
         odd_items: set = self.find_record(file_prev) | self.find_record(file_curr)
         
         new_items: list = []
-        for i in range(3 if not os.path.isfile(file_prev) else 1):
+        for i in range(n_pages if not os.path.isfile(file_prev) else 1):
             try:
                 new_page: list = __sources__[name](i+1)
             except:

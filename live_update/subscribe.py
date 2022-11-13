@@ -2,7 +2,7 @@ import re
 import os
 import xmlrpc.client
 import json
-import logs
+from . import logs
 import traceback
 
 class Subscribe:
@@ -27,9 +27,9 @@ class Subscribe:
         self.items = []    # new items 
         self.rules = []    # new rules
 
-    def download(self):    
+    def download(self, N = 10):    
         self.read_rules()  # odd rules
-        self.read_history(10)  # cached items
+        self.read_history(N)  # cached items
         self.n_new = 0    # number of new mached items
 
         for rule in self.rules:
@@ -38,15 +38,17 @@ class Subscribe:
             results = {}                        # {epsode: [(score, link, dir, title), (score, link, dir, title)]}
             for item in self.items:             # [release_time, release_type, release_title, release_magnet,release_size]
                 epsode, score = curr_rule.match(item)
-                if epsode == -1: continue
-                if epsode not in results: results[epsode] = []
+                if epsode == -1: 
+                    continue
+                if epsode not in results: 
+                    results[epsode] = []
                 results[epsode].append((score, item[3], rule["dir"], item[2]))  #  item match!
-            for epsode, results_per_epsode in results.items():         # download per epsode
+            for epsode, results_per_epsode in results.items():                  # download per epsode
                 results_per_epsode.sort(key = lambda x: x[0], reverse=True)
                 idx = rule["order"]
                 idx = idx if idx < len(results_per_epsode) else -1
-                if self.download_item(results_per_epsode[idx]):     # download by order
-                    curr_rule.delete(epsode)                        # delete downloaded epsode
+                if self.download_item(epsode, results_per_epsode[idx]): # download by order
+                    curr_rule.delete(epsode)                            # delete downloaded epsode
                     
             curr_rule.store()                   # restore epsode
 
@@ -57,16 +59,16 @@ class Subscribe:
                  
 
     # (score, link, dir, title)
-    def download_item(self,item):
+    def download_item(self, epsode, item):
         self.n_new += 1
-        _, link, subdir, title = item
-        logs.update_logger.info(f"[new] {title}")
+        socre, link, subdir, title = item
+        logs.update_logger.info(f"[new][{epsode}] {title}")
         try:
             s = xmlrpc.client.ServerProxy(self.aria2_url)
             id_ = s.aria2.addUri([link],{'dir': self.aria2_dir + subdir})
             aria_status = s.aria2.tellStatus(id_)
-            logs.update_logger.info(f"[download] {title} dir:{aria_status['dir']}")
-            logs.error_logger.info(f"[download] {title} dir:{aria_status['dir']}")
+            logs.update_logger.info(f"[download][{epsode}] {title} dir:{aria_status['dir']}")
+            logs.error_logger.info(f"[download][{epsode}] {title} dir:{aria_status['dir']}")
             return True
         except Exception as e:
             logs.error_logger.info(f"[aria2 error] port={self.aria2_url}, will try again]")
@@ -116,7 +118,7 @@ class Rule():
             self.title_optional = rules["title_optional"]
         self.title_optional = [re.compile(i, re.I) for i in self.title_optional]        
         
-        self.epsode_filter = re.compile(r'[^a-zA-Z0-9](\d\d)[^a-zA-Z0-9]')              # "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]"
+        self.epsode_filter = re.compile(r'[ \[【第](\d\d)[v\- \]】（集话]')              # "[^a-zA-Z0-9](\\d\\d)[^a-zA-Z0-9]"
         self.epsodes:set = self.epsode_str2int(rules["epsodes"] )
 
                 

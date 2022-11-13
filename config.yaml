@@ -1,0 +1,7 @@
+gloabl:
+  aria2: http://127.0.0.1:6800/rpc
+  download_dir: E:/anime
+  filter: '[^a-zA-Z0-9](\d\d)[^a-zA-Z0-9]'
+忍者一时:
+  epsodes: 1, 2, 3-4, 7+,
+  title: 忍者一时|Shinobi no Ittoki

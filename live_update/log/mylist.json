@@ -1,110 +1,277 @@
 [
   {
-    "dir": "无职转生",
+    "dir": "忍者一时",
     "title": [
-      "无职转生|Mushoku Tensei",
-      "動畫|Anime",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "24"
-    ]
-  },
-  {
-    "dir": "逆转世界的电池少女",
-    "title": [
-      "逆转世界的电池少女|Gyakuten Sekai|RUMBLE GARANNDOLL",
+      "忍者一时|Shinobi no Ittoki",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
     "order": 0,
     "epsodes": [
-      "13"
+      "7-33"
     ]
   },
   {
-    "dir": "暗杀者转生",
+    "dir": "Next Summit",
     "title": [
-      "暗杀者转生|Ansatsu Kizoku",
+      "Next Summit",
       "動畫",
       "简|CHS|GB|繁|CHT|BIG5"
     ],
     "order": 0,
     "epsodes": [
-      "13"
-    ]
-  },
-  {
-    "dir": "终末的后宫",
-    "title": [
-      "终末的后宫|Shuumatsu no Harem",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "2-13"
-    ]
-  },
-  {
-    "dir": "世界尽头的圣骑士",
-    "title": [
-      "Saihate no Paladin",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "13"
-    ]
-  },
-  {
-    "dir": "鬼灭",
-    "title": [
-      "Yuukaku-hen|遊郭篇",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "6-13"
-    ]
-  },
-  {
-    "dir": "宿命回响",
-    "title": [
-      "takt op",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "13"
-    ]
-  },
-  {
-    "dir": "国王",
-    "title": [
-      "国王排名",
-      "動畫",
-      "简|CHS|GB|繁|CHT|BIG5"
-    ],
-    "order": 0,
-    "epsodes": [
-      "8-13"
+      "7-33"
     ]
   },
   {
     "dir": "凡人修仙传",
     "title": [
-      "凡人修仙传|Journey To Immortality",
+      "凡人修仙传|A Record Of Mortal",
       "動畫"
     ],
     "order": 0,
     "epsodes": [
-      "29",
-      "32-50"
+      "73-99"
+    ]
+  },
+  {
+    "dir": "人类毛病大学",
+    "title": [
+      "Human Bug Daigaku",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "7-33"
+    ]
+  },
+  {
+    "dir": "想要成为影之实力者",
+    "title": [
+      "Kage no Jitsuryokusha ni Naritakute",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "7-33"
+    ]
+  },
+  {
+    "dir": "异世界归来的舅舅",
+    "title": [
+      "Isekai Ojisan",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "8-33"
+    ]
+  },
+  {
+    "dir": "Do It Yourself",
+    "title": [
+      "Do It Yourself",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "7-33"
+    ]
+  },
+  {
+    "dir": "转生成为魔剑",
+    "title": [
+      "Tensei shitara Ken deshita",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "8-33"
+    ]
+  },
+  {
+    "dir": "Mob Psycho 100",
+    "title": [
+      "Mob Psycho 100 S03|Mob Psycho 100 S3|Mob Psycho 100 III",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "7-33"
+    ]
+  },
+  {
+    "dir": "Koibito Miman",
+    "title": [
+      "Koibito Miman",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "秋叶原冥途战争",
+    "title": [
+      "Akiba Maid Sensou",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "圣剑传说",
+    "title": [
+      "Seiken Densetsu",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "7-33"
+    ]
+  },
+  {
+    "dir": "风都侦探",
+    "title": [
+      "风都侦探|Fuuto Tantei",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "13-33"
+    ]
+  },
+  {
+    "dir": "恋爱FLOPS",
+    "title": [
+      "flops",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "间谍过家家",
+    "title": [
+      "SPY.*FAMILY",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "19-33"
+    ]
+  },
+  {
+    "dir": "孤独摇滚",
+    "title": [
+      "Bocchi the Rock",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "惑星公主",
+    "title": [
+      "惑星公主|Hoshi no Samidare",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "17-33"
+    ]
+  },
+  {
+    "dir": "机动战士高达 水星的魔女",
+    "title": [
+      "Mobile Suit Gundam THE WITCH FROM MERCURY",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "7-33"
+    ]
+  },
+  {
+    "dir": "各有小秘密",
+    "title": [
+      "Uso wo Tsuku",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "5-33"
+    ]
+  },
+  {
+    "dir": "剑风传奇",
+    "title": [
+      "Memorial Edition.*限制",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "彼得",
+    "title": [
+      "彼得.*限制",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "死神",
+    "title": [
+      "Sennen Kessen-hen",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
+    ]
+  },
+  {
+    "dir": "电锯人",
+    "title": [
+      "Chainsaw",
+      "動畫",
+      "简|CHS|GB|繁|CHT|BIG5"
+    ],
+    "order": 0,
+    "epsodes": [
+      "6-33"
     ]
   }
 ]
