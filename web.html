@@ -12,7 +12,7 @@
             height: 50px;
             margin: 20px;
             color:#FFFFFF;
-            background-color: #1da1f2
+            background: #1da1f2;
         }
         .center {
             width: 100%;
@@ -30,7 +30,8 @@
             margin: 20px;
             font: 400 14px/140% 'cascadia code','noto sans cjk sc';
             overflow:scroll;
-            border: 2px solid;
+            border: 2px solid; 
+            background: #AAAAAA;
         }
     </style>
 </head>
@@ -43,7 +44,7 @@
 </div>
 <div class="center"> 
     <pre id='log_box' class="text_box" ></pre>
-    <textarea id='config_box' class="text_box"></textarea>
+    <textarea id='config_box' class="text_box" readonly="readonly"></textarea>
 </div>
 </body>
  
@@ -52,17 +53,28 @@
     function get_log(){
         $.post('/get_log', {}, function (data, status){ 
             $('#log_box').text(data.log + data.status);
-            $('#config_box').text(data.config)
+            $('#config_box').val(data.config)
         })
     } 
     function stop_app(){
-        $.post('/stop_app', {}, function(data, status){
+        $.post('/stop_app', {}, function(data, status){ 
+            if (data == 'stopped'){
+                $('#config_box').removeAttr("readonly");
+                $('#config_box').css("background","#FFFFFF");
+            }
             get_log();
         })
     } 
     function set_config(){ 
-        $.post('/set_config', {'config':$('#config_box').val()}, function (data, status){
-            $('#log_box').val(data);
+        $.post('/set_config', {'config':$('#config_box').val()}, function (data, status){ 
+            if (data == 'success'){
+                $('#config_box').attr("readonly","readonly");
+                $('#config_box').css("background","#AAAAAA");
+                get_log(); 
+
+            }else{
+                alert(data);
+            }
         })
     }
     $('#log_button').bind('click', get_log);
