@@ -1,6 +1,7 @@
 import time 
 import datetime
 import sys
+import os
 import threading 
 import subprocess 
 import platform 
@@ -29,7 +30,8 @@ except:
             log.relative_path('aria2/aria.bat'), 
             cwd=log.relative_path('aria2/'), 
             stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE, 
+            shell=True,
         ) 
     elif os_name == 'Linux':
         aria = subprocess.Popen(
