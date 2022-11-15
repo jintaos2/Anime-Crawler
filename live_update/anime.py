@@ -113,8 +113,8 @@ class AnimeSource(log.Task):
                         self.cache[i.release_magnet] = i        # update cache
                         f.write(str(i))                         # update cache file 
                         f.write('\n\n')
-                        
-            log.error_log.info(f'[{self.__class__.__name__} update {len(new_items)} items]')
+            if l:=len(new_items):
+                log.error_log.info(f'[{self.__class__.__name__} update {l} items]')
 
 
     def update_source(self, nth: int) -> list:
@@ -162,8 +162,6 @@ class AnimeSource(log.Task):
 
 @log.add_task 
 class nyaa(AnimeSource):
-    def __init__(self) -> None:
-        super().__init__()
 
     def update_source(self, nth: int) -> List[Anime]:
         url = self.url.format(nth) 
@@ -173,7 +171,7 @@ class nyaa(AnimeSource):
                 raw= requests.get(url, proxies=self.proxies, timeout=15).text
             except Exception as e:
                 raw = ''
-                log.error_log.info(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
+                log.error_log.error(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
                 time.sleep(1)
             if len(raw) > 20:
                 break
@@ -194,8 +192,8 @@ class nyaa(AnimeSource):
                     release_time = re.findall(r'>(.*?)<',detail[4])[-1]
                     new_items.append(Anime(release_time, release_type, release_title, release_magnet,release_size))  
                 except:
-                    log.error_log.info(traceback.format_exc())
-                    log.error_log.info(f"[regex] row: {i}")            
+                    log.error_log.error(traceback.format_exc())
+                    log.error_log.error(f"[regex] row: {i}")            
         return new_items
 
 
@@ -203,8 +201,6 @@ class nyaa(AnimeSource):
 
 @log.add_task 
 class dmhy(AnimeSource):
-    def __init__(self) -> None:
-        super().__init__()
 
     def update_source(self, nth: int) -> List[Anime]:
         """ return list([release_time, release_type, release_title, release_magnet,release_size]) """
@@ -215,7 +211,7 @@ class dmhy(AnimeSource):
                 raw=requests.get(url, proxies=self.proxies, timeout = 15).text 
             except Exception as e:
                 raw = ''
-                log.error_log.info(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
+                log.error_log.error(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
             if len(raw) > 20:
                 break
 
@@ -246,8 +242,6 @@ class dmhy(AnimeSource):
 
 @log.add_task 
 class dmhy2(AnimeSource):
-    def __init__(self) -> None:
-        super().__init__()
 
     def update_source(self, nth: int) -> List[Anime]:
         main_url = self.url
@@ -266,7 +260,7 @@ class dmhy2(AnimeSource):
             'finishNum': '-'}
             """
         except Exception as e:
-            log.error_log.info(f"[error] post {main_url}! error_info={e}")
+            log.error_log.error(f"[error] post {main_url}! error_info={e}")
             return []
 
         def post_item(_id:int, _link:str, title:str="") -> str:
@@ -283,7 +277,7 @@ class dmhy2(AnimeSource):
                     return r 
                 except:
                     log.error_log.error(f"[error post n_try={i}] url={url}, \ndata={data}, \ntitle={title}\n{traceback.format_exc(1)}")
-                    log.error_log.info(f"[error post n_try={i}] {title}")
+                    log.error_log.error(f"[error post n_try={i}] {title}")
                     time.sleep(i*2+2.5)
             return None
                 

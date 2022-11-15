@@ -151,7 +151,6 @@ class error_log(Task):
             i.setLevel(logging.INFO)
             i.setFormatter( self.format)
             self.logger.addHandler(i)
-        self.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")  
 
     def loop_head(self):
         # check config

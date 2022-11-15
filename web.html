@@ -40,9 +40,10 @@
 <div class="center"> 
     <button id="log_button" class="button">refresh</button>
     <button id="stop_button" class="button">stop</button>
-    <button id="config_button" class="button">set config</button>
+    <button id="config_button" class="button">set config</button> 
 </div>
 <div class="center"> 
+    <div id="status_box" style="width:100%;text-align:center;font:400 18px/140% 'cascadia code';color:brown;"></div>
     <pre id='log_box' class="text_box" ></pre>
     <textarea id='config_box' class="text_box" readonly="readonly"></textarea>
 </div>
@@ -52,7 +53,8 @@
 <script>
     function get_log(){
         $.post('/get_log', {}, function (data, status){ 
-            $('#log_box').text(data.log + data.status);
+            $('#log_box').text(data.log); 
+            $('#status_box').html(data.status)
             $('#config_box').val(data.config)
         })
     } 

@@ -1,7 +1,11 @@
 import time 
 import datetime
 import sys
-import threading
+import threading 
+import subprocess 
+import platform 
+import psutil
+import xmlrpc.client
 
 from flask import Flask, render_template_string, request
 
@@ -12,15 +16,45 @@ import live_update
 if len(sys.argv) > 1:
     log.debug = True
 
+os_name = platform.system()
+
+
+# start aria 
+try:
+    aria2 = xmlrpc.client.ServerProxy("http://127.0.0.1:6800/rpc")
+    aria2.aria2.getGlobalStat() 
+except:
+    if os_name == 'Windows':
+        aria = subprocess.Popen(
+            log.relative_path('aria2/aria.bat'), 
+            cwd=log.relative_path('aria2/'), 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE
+        ) 
+    elif os_name == 'Linux':
+        aria = subprocess.Popen(
+            log.relative_path('aria2/aria.sh'), 
+            cwd=log.relative_path('aria2/'), 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.PIPE
+        ) 
+
 # app status
 status = 'not start'
-idle = False 
+idle = False  
+
+def get_system_status() -> str:
+    cpu = psutil.cpu_percent() 
+    m = psutil.virtual_memory() 
+    m_used = m.used/(1 << 30) 
+    m_total = m.total/(1<<30)
+    return f"{datetime.datetime.now()}<br>{os_name} cpu: <mark>{cpu}%</mark> mem: <mark>{m_used:.2f}GB/{m_total:.2f}GB</mark><br>status: <mark>{status or 'stopped'}</mark>"
 
 def run():
     global status
     counter = 0
     while 1:
-        time.sleep(1) 
+        time.sleep(0.2) 
         counter += 1
         if idle: 
             status = '' 
@@ -37,10 +71,10 @@ def run():
             for task in log.tasks:
                 task.loop_tail()  
             log.error_log.error(f'[total cost] {time.time()-t} s')
-        elif counter > 900:         # loop interval
+        elif counter > 900*5:         # loop interval
             counter = 0
         else:
-            status = 'waiting' 
+            status = 'loop_waiting' 
  
 
 
@@ -52,13 +86,10 @@ app = Flask(__name__)
 
 @app.route('/get_log',methods=['GET','POST'])
 def get_log(): 
-    _log = ''.join(log.error_log.get_history()) 
-    _status = status or 'stopped' 
-    _config = str(log.load_config)
     return {
-        'log' : _log, 
-        'status': f'{_status} ━━━━━━━━━━━━━━━━━━━━ {datetime.datetime.now()}', 
-        'config': _config,
+        'log' : ''.join(log.error_log.get_history()), 
+        'status': get_system_status(), 
+        'config': str(log.load_config),
     }
 
 @app.route('/stop_app',methods=['GET','POST'])
@@ -66,7 +97,7 @@ def stop_app():
     global idle, status
     idle = True
     while status:
-        time.sleep(0.5)
+        time.sleep(0.2)
     return 'stopped'
 
 @app.route('/set_config',methods=['GET','POST'])
@@ -80,7 +111,7 @@ def set_config():
             return 'invalid config'
     idle = False
     while not status:
-        time.sleep(0.5) 
+        time.sleep(0.2) 
     return 'success'
 
  

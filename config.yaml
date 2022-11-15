@@ -1,5 +1,5 @@
 - max_log_lines: 500
-  max_cache_items: 100
+  max_cache_items: 200
   download_dir: E:/anime2
   aria2: http://127.0.0.1:6800/rpc
   proxies_en: false
@@ -22,7 +22,7 @@
   - 简|CHS|GB
   - 1080|2160
 - filters: 忍者一时|Shinobi no Ittoki
-  epsodes: 7+
+  epsodes: 8+
 - filters: Next Summit
   epsodes: 7+
 - filters: 人类毛病大学|Human Bug Daigaku

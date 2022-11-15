@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import re
 import xmlrpc.client
 import log
-import traceback
+import time
 
 from . import anime
 
@@ -29,7 +29,7 @@ class RuleItem:
         # {epsode:Anime}
         self.matched: Dict[int, List[anime.Anime]] = {} 
         self.order = order  
-        log.error_log.error(f'[new rule] dir={dir}, epsodes={(epsodes & ((1<<32)-1)):0>25b}')
+        log.error_log.error(f'[new rule] epsodes={(epsodes & ((1<<32)-1)):0>25b} dir={dir}')
 
     def match(self, item: anime.Anime) -> bool:
         """
@@ -158,6 +158,7 @@ class match_rule(log.Task):
 
 
     def loop_body(self):
+        t = time.time()
         self.matched_items = []
         for source in log.tasks:
             if isinstance(source, anime.AnimeSource):
@@ -165,7 +166,7 @@ class match_rule(log.Task):
                     for rule in self.rule_items:
                         if rule.match(new_item):
                             break
-
+        log.error_log.error(f'[match_rule cost] {time.time()-t} s')
 
     def loop_tail(self):
         for idx, rule in enumerate(self.rule_items):
@@ -185,10 +186,11 @@ class download(log.Task):
         """ read url, config """  
         self.aria2_url = log.config[0].get('aria2')
         self.aria2_dir = log.config[0].get('download_dir')
-        log.error_log.error(f'downloader: url={self.aria2_url}, dir={self.aria2_dir}')
+        log.error_log.error(f'[downloader config] url={self.aria2_url}, dir={self.aria2_dir}')
 
 
     def loop_body(self): 
+        t = time.time()
         s = xmlrpc.client.ServerProxy(self.aria2_url)
         for rule in match_rule.rule_items:
             for epsode, animes in rule.matched.items():
@@ -201,8 +203,8 @@ class download(log.Task):
                 try:
                     id_ = s.aria2.addUri([anime.release_magnet],{'dir': f'{self.aria2_dir}/{rule.dir}'}) 
                     aria_status = s.aria2.tellStatus(id_) 
-                    log.error_log.info('[download]', new_info, f"--> {aria_status['dir']}")
+                    log.error_log.info('[download start]', new_info, f"--> {aria_status['dir']}")
                     rule.delete(epsode)
                 except Exception as e:
                     log.error_log.info(f"[download error] {new_info}\n  --> port={self.aria2_url}: {e}")
-        
+        log.error_log.error(f'[download cost] {time.time()-t} s')
