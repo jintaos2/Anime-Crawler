@@ -63,6 +63,8 @@
             if (data == 'stopped'){
                 $('#config_box').removeAttr("readonly");
                 $('#config_box').css("background","#FFFFFF");
+            }else{
+                alert(data)
             }
             get_log();
         })

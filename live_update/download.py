@@ -185,7 +185,7 @@ class download(log.Task):
     def loop_head(self):
         """ read url, config """  
         self.aria2_url = log.config[0].get('aria2')
-        self.aria2_dir = log.config[0].get('download_dir')
+        self.aria2_dir = log.relative_path(log.config[0].get('download_dir'))
         log.error_log.error(f'[downloader config] url={self.aria2_url}, dir={self.aria2_dir}')
 
 

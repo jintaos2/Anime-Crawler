@@ -7,6 +7,7 @@ import subprocess
 import platform 
 import psutil
 import xmlrpc.client
+import traceback
 
 from flask import Flask, render_template_string, request
 
@@ -53,7 +54,7 @@ def get_system_status() -> str:
     return f"{datetime.datetime.now()}<br>{os_name} cpu: <mark>{cpu}%</mark> mem: <mark>{m_used:.2f}GB/{m_total:.2f}GB</mark><br>status: <mark>{status or 'stopped'}</mark>"
 
 def run():
-    global status
+    global status, idle
     counter = 0
     while 1:
         time.sleep(0.2) 
@@ -61,22 +62,25 @@ def run():
         if idle: 
             status = '' 
             counter = 0 
-        elif counter == 1: 
+        elif counter == 1:  
             status = 'loop_head' 
-            t = time.time()
-            for task in log.tasks:
-                task.loop_head() 
-            status = 'loop_body'
-            for task in log.tasks:
-                task.loop_body()
-            status = 'loop_tail'
-            for task in log.tasks:
-                task.loop_tail()  
+            t = time.time() 
+            try:
+                for task in log.tasks:
+                    task.loop_head() 
+                status = 'loop_body'
+                for task in log.tasks:
+                    task.loop_body()
+                status = 'loop_tail'
+                for task in log.tasks:
+                    task.loop_tail()   
+            except:
+                log.error_log.info(traceback.format_exc())
             log.error_log.error(f'[total cost] {time.time()-t} s')
         elif counter > 900*5:         # loop interval
             counter = 0
         else:
-            status = 'loop_waiting' 
+            status = f'loop_waiting {counter*0.2} s' 
  
 
 
@@ -96,11 +100,15 @@ def get_log():
 
 @app.route('/stop_app',methods=['GET','POST'])
 def stop_app(): 
+    log.error_log.error('press stop')
     global idle, status
-    idle = True
-    while status:
-        time.sleep(0.2)
-    return 'stopped'
+    idle = True 
+    for _ in range(10):
+        if status:
+            time.sleep(0.2) 
+        else:
+            return 'stopped'
+    return 'cannot stop'
 
 @app.route('/set_config',methods=['GET','POST'])
 def set_config(): 
@@ -124,6 +132,6 @@ def main():
     return render_template_string(template)
 
 
-app.run(host='127.0.0.1', port = 6888)  
+app.run(host='0.0.0.0', port = 6801)  
 
 

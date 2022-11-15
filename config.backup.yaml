@@ -1,6 +1,6 @@
-- max_log_lines: 500
+- max_log_lines: 400
   max_cache_items: 200
-  download_dir: E:/anime2
+  download_dir: ../anime
   aria2: http://127.0.0.1:6800/rpc
   proxies_en: false
   proxies_url: http://localhost:7890
@@ -24,7 +24,7 @@
 - filters: 忍者一时|Shinobi no Ittoki
   epsodes: 8+
 - filters: Next Summit
-  epsodes: 7+
+  epsodes: 8+
 - filters: 人类毛病大学|Human Bug Daigaku
   epsodes: 7+
 - filters: 想要成为影之实力者|Kage no Jitsuryokusha ni Naritakute
@@ -54,4 +54,4 @@
 - filters: 死神|Sennen Kessen-hen
   epsodes: 7+
 - filters: 电锯人|Chainsaw
-  epsodes: 6+
+  epsodes: 7+
