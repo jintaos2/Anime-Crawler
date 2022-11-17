@@ -6,14 +6,27 @@ import re
 import logging 
 import yaml 
 import shutil
-import traceback 
+import traceback  
+import sys 
+import platform 
+import psutil 
+import datetime
 
 # global variables
 # ----------------
+os_name = platform.system()
+
+# debug flag
+debug = len(sys.argv) > 1
+
+# app status
+idle = False   
+status = 'not start'
+flask_port = 6801
+
 # config.yaml
 config: List[Dict] = [{}]
 tasks: List[Task] = []
-debug = False
 
 
 class Task: 
@@ -29,8 +42,11 @@ class Task:
     def loop_tail(self):
         """ end loop. ex. write back config """ 
 
+    def loop_exit(self):
+        """ clean up """
+
     def __str__(self) -> str:
-        return self.__class__.__name__
+        return f'Task: {self.__class__.__name__}'
 
 
 def add_task(cls):
@@ -77,34 +93,22 @@ class load_config(Task):
             with open(self.path_backup, 'w', encoding='utf8') as f:
                 config = yaml.load(f, Loader=yaml.CLoader)  
         finally:
-            self.loop_head()
+            self._check_config()
+            print(f'[loop_init] load_config len={len(config)}')
 
-    def loop_head(self):
+    def _check_config(self):
         global config
         if not isinstance(config, list) or not config or not isinstance(config[0], dict):
-            config = [{}]  
+            config = [{}]         
+
+    def loop_head(self):
+        self._check_config() 
+        error_log.error(f'[loop_head] config check: len={len(config)}')
 
     def loop_tail(self):
-        global config
         with open(self.path, 'w', encoding='utf8') as f:
             yaml.dump(config, f, Dumper=yaml.CDumper, allow_unicode=True, sort_keys=False) 
-
-
-    def load_str(self, s: str) -> bool:
-        global config
-        try: 
-            new_config = yaml.load(s, Loader=yaml.CLoader)  
-            _ = new_config[0]['max_log_lines'] 
-            config = new_config
-            return True
-        except: 
-            error_log.info(traceback.format_exc())
-            return False
-
-
-    def __str__(self) -> str:
-        return yaml.dump(config, allow_unicode = True, sort_keys=False, Dumper=yaml.CDumper)
-    
+        error_log.error(f'[loop_tail] config store to {self.path}')
 
     
 
@@ -130,19 +134,16 @@ class error_log(Task):
         self.logger = logging.getLogger('error') 
         self.logger.setLevel(logging.INFO)  
         self.history = LogStream()
-        self.format = logging.Formatter(
-            "%(asctime)s (%(filename)s:%(lineno)d) %(message)s ",'%Y/%m/%d %H:%M:%S'
-        )
-        # formatter = logging.Formatter("%(asctime)s %(message)s",'%Y/%m/%d %H:%M:%S')
+        self.format = logging.Formatter("{asctime} ({filename:>12}:{lineno:<3}) {message}", r'%Y/%m/%d %H:%M:%S', style='{')
         debug_file = relative_path('./debug.log')  
         # load log and reduce log size
         try:
             with open(debug_file, 'r', encoding='utf8') as f: 
                 self.history.logs = f.readlines()
         finally: 
-            self.loop_head()
+            self._check_config()
             with open(debug_file, 'w+', encoding='utf8') as f:
-                f.writelines(self.history.logs)
+                f.writelines(self.history.logs) 
         # add handler
         fh = logging.FileHandler(debug_file, mode='a', encoding='utf8') 
         ch = logging.StreamHandler() 
@@ -150,21 +151,22 @@ class error_log(Task):
         for i in [fh, ch, sh]:
             i.setLevel(logging.INFO)
             i.setFormatter( self.format)
-            self.logger.addHandler(i)
+            self.logger.addHandler(i) 
+        self.error(f'[loop_init] error_log cache: {len(self.history.logs)} lines')
 
-    def loop_head(self):
+    def _check_config(self):
         # check config
         n = config[0].get('max_log_lines') 
         if not isinstance(n, int) or n < 100:
             config[0]['max_log_lines'] = 100  
             n = 100 
         # reduce log
-        if len(self.history.logs) > 2*n:
+        if len(self.history.logs) > n*1.4:
             self.history.logs = self.history.logs[-n:] 
 
-
-    def get_history(self) -> List[str]:
-        return self.history.logs
+    def loop_head(self):
+        self._check_config()
+        self.error(f'[loop_head] error_log cache: {len(self.history.logs)} lines')
 
     def info(self, *args, stacklevel = 2):
         s = ' '.join(str(i) for i in args)
@@ -179,3 +181,33 @@ class error_log(Task):
         return f'error_log: keep {len(self.history.logs)} lines of log'
 
 
+
+def get_log_lines():
+    return ''.join(error_log.history.logs)
+
+
+def get_config():
+    return yaml.dump(config, allow_unicode = True, sort_keys=False, Dumper=yaml.CDumper)
+
+
+def get_status() -> str:
+    cpu = psutil.cpu_percent() 
+    m = psutil.virtual_memory() 
+    m_used = m.used/(1 << 30) 
+    m_total = m.total/(1<<30)
+    m_app = psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2
+    return f"{datetime.datetime.now()}<br>{os_name} cpu: <mark>{cpu}%</mark> mem: <mark>{m_app}MB/{m_used:.2f}GB/{m_total:.2f}GB</mark><br>status: <mark>{status or 'stopped'}</mark>"
+
+
+def set_config(s:str) -> bool: 
+    if status:
+        return False
+    global config
+    try: 
+        new_config = yaml.load(s, Loader=yaml.CLoader)  
+        _ = new_config[0]['max_log_lines'] + 1
+        config = new_config
+        return True
+    except: 
+        error_log.info('[parse config from web error] ', traceback.format_exc())
+        return False

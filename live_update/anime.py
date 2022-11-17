@@ -38,6 +38,7 @@ class Anime:
 
     @staticmethod 
     def load(s: str) -> Optional[Anime]:
+        """ load a line to Anime """
         i = s.split(',')
         if len(i) != 5: 
             return None 
@@ -46,6 +47,7 @@ class Anime:
         return Anime(i[0],i[1],i[2],i[3],i[4]) 
 
     def copy(self):
+        """ return a new copy """
         return Anime(**self.__dict__)
 
 
@@ -56,7 +58,8 @@ class AnimeSource(log.Task):
         self.proxies = None
         self.pages: int = 0  
         # release_magnet: [release_time, release_type, release_title, release_magnet,release_size]
-        self.cache: Dict[str, Anime] = {}
+        self.cache: Dict[str, Anime] = {} 
+        log.error_log.error(f'[loop_init] anime cache dir: {self.cache_dir}')
         
 
     def loop_head(self): 
@@ -79,7 +82,7 @@ class AnimeSource(log.Task):
             self.proxies = log.config[0].get('proxies_url')
         # active
         if self.pages:
-            log.error_log.error(f'[add valid source] {name}:{self.url}, pages:{self.pages}')
+            log.error_log.error(f'[loop_head] anime source active {name}:{self.url}, pages:{self.pages}')
             if not os.path.isdir(self.cache_dir):
                 os.makedirs(self.cache_dir)  
             self._reduce_cache()
@@ -94,7 +97,7 @@ class AnimeSource(log.Task):
                 try:
                     new_page: List[Anime] = self.update_source(n+1)
                 except:
-                    log.error_log.error(traceback.format_exc())
+                    log.error_log.error(f'[loop_body] {self.__class__.__name__} error: ', traceback.format_exc())
                     new_page = []
                 
                 for item in new_page:
@@ -114,7 +117,7 @@ class AnimeSource(log.Task):
                         f.write(str(i))                         # update cache file 
                         f.write('\n\n')
             if l:=len(new_items):
-                log.error_log.info(f'[{self.__class__.__name__} update {l} items]')
+                log.error_log.info(f'[loop_body] anime source {self.__class__.__name__} update {l} items, cached {len(self.cache)} items')
 
 
     def update_source(self, nth: int) -> list:
@@ -148,10 +151,11 @@ class AnimeSource(log.Task):
                 dicts.append(new_items)
                 count += len(new_items) 
             except Exception as e:
-                log.error_log.error(f"[read odd cache {file} error]{e}") 
+                log.error_log.error(f"[loop_head] read odd cache {file} error: {e}") 
         # odd to new
         for d in reversed(dicts):
-            self.cache.update(d) 
+            self.cache.update(d)  
+        log.error_log.error(f'[loop_head] anime source {self.__class__.__name__} read {len(self.cache)} items from cache')
 
     def __iter__(self):
         return iter(self.cache.values()) 
@@ -203,7 +207,6 @@ class nyaa(AnimeSource):
 class dmhy(AnimeSource):
 
     def update_source(self, nth: int) -> List[Anime]:
-        """ return list([release_time, release_type, release_title, release_magnet,release_size]) """
         url = self.url.format(nth)
         for n_try in range(3):
             time.sleep(1)
@@ -211,12 +214,12 @@ class dmhy(AnimeSource):
                 raw=requests.get(url, proxies=self.proxies, timeout = 15).text 
             except Exception as e:
                 raw = ''
-                log.error_log.error(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
+                log.error_log.error(f"[loop_body] dmhy try={n_try} getting {url} error: {e}")
             if len(raw) > 20:
                 break
 
         tables = re.findall(r'<tbody>[\s\S]*</tbody>',raw)
-        log.error_log.error(f"[dmhy] requests.get {url} nth_try={n_try} r.text={len(raw)}")        
+        log.error_log.error(f"[loop_body] dmhy page={nth} try={n_try} requests.get {url} r.text={len(raw)}")        
         if len(tables) == 0:
             return []
             
@@ -235,7 +238,7 @@ class dmhy(AnimeSource):
                 release_size = re.sub(r'<.*?>','',detail[4])
                 new_items.append(Anime(release_time, release_type, release_title, release_magnet,release_size))  
             except:
-                log.error_log.info(traceback.format_exc())
+                log.error_log.info('parse dmhy table error', traceback.format_exc())
         return new_items
 
 

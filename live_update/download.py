@@ -29,7 +29,7 @@ class RuleItem:
         # {epsode:Anime}
         self.matched: Dict[int, List[anime.Anime]] = {} 
         self.order = order  
-        log.error_log.error(f'[new rule] epsodes={(epsodes & ((1<<32)-1)):0>25b} dir={dir}')
+        # log.error_log.error(f'[new rule] epsodes={(epsodes & ((1<<32)-1)):0>25b} dir={dir}')
 
     def match(self, item: anime.Anime) -> bool:
         """
@@ -46,7 +46,7 @@ class RuleItem:
             if not self.epsodes & (1<<epsode):
                 return False     # epsode not match    
         else:
-            log.error_log.info(f"[error filter epsode] {title}")
+            log.error_log.info(f"[loop_body] filter epsode error: {title}")
             return False 
         
         score = 0
@@ -70,7 +70,6 @@ class match_rule(log.Task):
     rule_items: List[RuleItem]
 
     def __init__(self):
-
         self.re_dir_name = re.compile(r'[<>/\\\|:"*? ]')
 
 
@@ -90,6 +89,7 @@ class match_rule(log.Task):
         self.rule_items: List[RuleItem] = []  
         for i in log.config[1:]:
             self.rule_items.append(self._read_log(i))   
+        log.error_log.error(f'[loop_head] matcher find {len(self.rule_items)} rules')
 
 
     def _read_log(self, item: Dict[str,str]):
@@ -114,7 +114,6 @@ class match_rule(log.Task):
         ret = s.split('|')[0] 
         return self.re_dir_name.sub('', ret)
 
-
     def epsode_str2int(self,a:str) -> set: # '1-2, 5-6, 9+' -> ...11111111001100110
         ret = 0 
         a = a.split(',')
@@ -131,8 +130,7 @@ class match_rule(log.Task):
                 ii = [int(ii[0]), int(ii[1])+1]
                 ret |= ((1 << ii[1]) - 1) & ~((1 << ii[0]) - 1) 
         return ret 
- 
-    
+  
     def epsode_int2str(self, a: int) -> str:    # 11111111001100110 -> ['1-2', '5-6', '9-16']
         ret = []
         bit_idx = 0
@@ -159,14 +157,17 @@ class match_rule(log.Task):
 
     def loop_body(self):
         t = time.time()
-        self.matched_items = []
+        total = 0 
+        n = 0
         for source in log.tasks:
             if isinstance(source, anime.AnimeSource):
                 for new_item in source.cache.values():
+                    total += 1
                     for rule in self.rule_items:
-                        if rule.match(new_item):
+                        if rule.match(new_item): 
+                            n += 1
                             break
-        log.error_log.error(f'[match_rule cost] {time.time()-t} s')
+        log.error_log.error(f'[loop_body] match {n} of {total} items, cost {time.time()-t} s')
 
     def loop_tail(self):
         for idx, rule in enumerate(self.rule_items):
@@ -186,11 +187,10 @@ class download(log.Task):
         """ read url, config """  
         self.aria2_url = log.config[0].get('aria2')
         self.aria2_dir = log.relative_path(log.config[0].get('download_dir'))
-        log.error_log.error(f'[downloader config] url={self.aria2_url}, dir={self.aria2_dir}')
+        log.error_log.error(f'[loop_head] download url={self.aria2_url}, dir={self.aria2_dir}')
 
 
     def loop_body(self): 
-        t = time.time()
         s = xmlrpc.client.ServerProxy(self.aria2_url)
         for rule in match_rule.rule_items:
             for epsode, animes in rule.matched.items():
@@ -199,12 +199,11 @@ class download(log.Task):
                     anime = animes[rule.order]
                 except:
                     anime = animes[-1] 
-                new_info = f"[epsode={epsode} score={anime.score}] {anime.release_title}"
+                new_info = f"epsode={epsode} score={anime.score} title={anime.release_title}"
                 try:
                     id_ = s.aria2.addUri([anime.release_magnet],{'dir': f'{self.aria2_dir}/{rule.dir}'}) 
                     aria_status = s.aria2.tellStatus(id_) 
-                    log.error_log.info('[download start]', new_info, f"--> {aria_status['dir']}")
+                    log.error_log.info(f"[loop_body] [download start] {new_info} --> {aria_status['dir']}")
                     rule.delete(epsode)
                 except Exception as e:
-                    log.error_log.info(f"[download error] {new_info}\n  --> port={self.aria2_url}: {e}")
-        log.error_log.error(f'[download cost] {time.time()-t} s')
+                    log.error_log.info(f"[loop_body] [download error] {new_info}\n  --> aria={self.aria2_url}: {e}")

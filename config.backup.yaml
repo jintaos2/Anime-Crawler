@@ -1,6 +1,6 @@
-- max_log_lines: 400
+- max_log_lines: 200
   max_cache_items: 200
-  download_dir: ../anime
+  download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
   proxies_en: false
   proxies_url: http://localhost:7890

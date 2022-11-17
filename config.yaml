@@ -1,6 +1,6 @@
-- max_log_lines: 400
+- max_log_lines: 600
   max_cache_items: 200
-  download_dir: ../anime
+  download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
   proxies_en: false
   proxies_url: http://localhost:7890
@@ -14,7 +14,7 @@
     dmhy2:
     - https://dongmanhuayuan.myheartsite.com/api/acg/search
     - 0
-  title_epsodes: '[ \[【第](\d\d)[v\- \]】（集话話]'
+  title_epsodes: '[ \[【第E](\d\d)[v\- \]】（集话話]'
   title_must:
   - 動畫
   - 简|CHS|GB|繁|CHT|BIG5
@@ -26,15 +26,15 @@
 - filters: Next Summit
   epsodes: 8+
 - filters: 人类毛病大学|Human Bug Daigaku
-  epsodes: 7+
+  epsodes: 8+
 - filters: 想要成为影之实力者|Kage no Jitsuryokusha ni Naritakute
-  epsodes: 7+
+  epsodes: 8+
 - filters: Do It Yourself
   epsodes: 7+
 - filters: 转生成为魔剑|Tensei shitara Ken deshita
-  epsodes: 8+
+  epsodes: 9+
 - filters: Mob Psycho 100|Mob Psycho 100 S03|Mob Psycho 100 S3|Mob Psycho 100 III
-  epsodes: 7+
+  epsodes: 8+
 - filters: Koibito Miman
   epsodes: 7+
 - filters: 秋叶原冥途战争|Akiba Maid Sensou
