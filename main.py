@@ -6,7 +6,7 @@ import traceback
 
 import log
 import web
-import live_update
+import update
 
 
 @log.add_task 

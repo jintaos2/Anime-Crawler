@@ -1,4 +1,4 @@
-- max_log_lines: 600
+- max_log_lines: 400
   max_cache_items: 200
   download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
@@ -6,7 +6,7 @@
   proxies_url: http://localhost:7890
   sources:
     dmhy:
-    - https://www.dmhy.org/topics/list/page/{}
+    - https://dmhy.anoneko.com/topics/list/page/{}
     - 4
     nyaa:
     - https://nyaa.si/?p={}
@@ -14,44 +14,30 @@
     dmhy2:
     - https://dongmanhuayuan.myheartsite.com/api/acg/search
     - 0
-  title_epsodes: '[ \[【第E](\d\d)[v\- \]】（集话話]'
+  title_epsodes: '[ \[【第E](\d\d)[Fv\- \]】（集话話]'
   title_must:
   - 動畫
   - 简|CHS|GB|繁|CHT|BIG5
   title_score:
   - 简|CHS|GB
   - 1080|2160
-- filters: 忍者一时|Shinobi no Ittoki
-  epsodes: 8+
-- filters: Next Summit
-  epsodes: 8+
-- filters: 人类毛病大学|Human Bug Daigaku
-  epsodes: 8+
 - filters: 想要成为影之实力者|Kage no Jitsuryokusha ni Naritakute
-  epsodes: 8+
-- filters: Do It Yourself
-  epsodes: 7+
-- filters: 转生成为魔剑|Tensei shitara Ken deshita
-  epsodes: 9+
-- filters: Mob Psycho 100|Mob Psycho 100 S03|Mob Psycho 100 S3|Mob Psycho 100 III
-  epsodes: 8+
-- filters: Koibito Miman
-  epsodes: 7+
+  epsodes: 14+
 - filters: 秋叶原冥途战争|Akiba Maid Sensou
-  epsodes: 7+
+  epsodes: 13+
 - filters: 恋爱FLOPS|flops
-  epsodes: 6+
+  epsodes: 13+
 - filters: 间谍过家家|SPY.*FAMILY
-  epsodes: 20+
+  epsodes: 26+
 - filters: 孤独摇滚|Bocchi the Rock
-  epsodes: 7+
+  epsodes: 13+
 - filters: 机动战士高达 水星的魔女|Mobile Suit Gundam THE WITCH FROM MERCURY
-  epsodes: 7+
+  epsodes: 12+
 - filters: 各有小秘密|Uso wo Tsuku
-  epsodes: 6+
+  epsodes: 12+
 - filters: 彼得.*限制
-  epsodes: 7+
+  epsodes: 13+
 - filters: 死神|Sennen Kessen-hen
-  epsodes: 7+
+  epsodes: 14+
 - filters: 电锯人|Chainsaw
-  epsodes: 7+
+  epsodes: 13+

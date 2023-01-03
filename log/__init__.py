@@ -196,7 +196,7 @@ def get_status() -> str:
     m_used = m.used/(1 << 30) 
     m_total = m.total/(1<<30)
     m_app = psutil.Process(os.getpid()).memory_info().rss / 1024 ** 2
-    return f"{datetime.datetime.now()}<br>{os_name} cpu: <mark>{cpu}%</mark> mem: <mark>{m_app}MB/{m_used:.2f}GB/{m_total:.2f}GB</mark><br>status: <mark>{status or 'stopped'}</mark>"
+    return f"{datetime.datetime.now()}<br>{os_name} cpu: <mark>{cpu}%</mark> mem: <mark>{m_app:.2f}MB/{m_used:.2f}GB/{m_total:.2f}GB</mark><br>status: <mark>{status or 'stopped'}</mark>"
 
 
 def set_config(s:str) -> bool: 
