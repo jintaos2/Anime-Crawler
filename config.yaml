@@ -1,20 +1,20 @@
 - max_log_lines: 400
-  max_cache_items: 200
+  max_cache_items: 1000
   download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
-  proxies_en: false
+  proxies_en: true
   proxies_url: http://localhost:7890
   sources:
     dmhy:
-    - https://dmhy.anoneko.com/topics/list/page/{}
-    - 4
+    - https://dmhy.org/topics/list/page/{}
+    - 2
     nyaa:
     - https://nyaa.si/?p={}
     - 0
     dmhy2:
     - https://dongmanhuayuan.myheartsite.com/api/acg/search
     - 0
-  title_epsodes: '[ \[【第E](\d\d)[Fv\- \]】（集话話]'
+  title_epsodes: '[ \[【减第E](\d\d)[Fv\- \]】（集话話]'
   title_must:
   - 動畫
   - 简|CHS|GB|繁|CHT|BIG5
@@ -22,22 +22,36 @@
   - 简|CHS|GB
   - 1080|2160
 - filters: 想要成为影之实力者|Kage no Jitsuryokusha ni Naritakute
-  epsodes: 14+
-- filters: 秋叶原冥途战争|Akiba Maid Sensou
+  epsodes: 18+
+- filters: 冰海战记 第二季
+  epsodes: 4+
+- filters: 转生王女与天才千金的魔法革命|Tensei Oujo
+  epsodes: 5+
+- filters: 机动战士高达 水星的魔女|Mobile Suit Gundam THE WITCH
   epsodes: 13+
-- filters: 恋爱FLOPS|flops
-  epsodes: 13+
-- filters: 间谍过家家|SPY.*FAMILY
-  epsodes: 26+
-- filters: 孤独摇滚|Bocchi the Rock
-  epsodes: 13+
-- filters: 机动战士高达 水星的魔女|Mobile Suit Gundam THE WITCH FROM MERCURY
-  epsodes: 12+
-- filters: 各有小秘密|Uso wo Tsuku
-  epsodes: 12+
-- filters: 彼得.*限制
-  epsodes: 13+
-- filters: 死神|Sennen Kessen-hen
-  epsodes: 14+
-- filters: 电锯人|Chainsaw
+- filters: 生而为狗|Inu ni Nattara
+  epsodes: 5+
+- filters: 别当欧尼酱了|Onii-chan wa Oshimai
+  epsodes: 5+
+- filters: 异世界悠闲农家|Isekai Nonbiri Nouka
+  epsodes: 4+
+- filters: 阿鲁斯的巨兽|Ars no Kyojuu
+  epsodes: 4+
+- filters: 枪神|Trigun Stampede
+  epsodes: 4+
+- filters: 尼尔|NieR.*Automata
+  epsodes: 4+
+- filters: 沦落者之夜|Nokemono-tachi no Yoru
+  epsodes: 1+
+- filters: 妖幻三重奏|Ayakashi
+  epsodes: 4+
+- filters: 魔术士欧菲流浪之旅
+  epsodes: 1+
+- filters: 狩火之王|Hikari no
+  epsodes: 4+
+- filters: 大雪海|Ooyukiumi
+  epsodes: 4+
+- filters: 万事屋|Benriya Saitou
+  epsodes: 4+
+- filters: 异世界舅舅|Isekai Ojisan
   epsodes: 13+

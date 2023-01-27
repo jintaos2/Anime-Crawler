@@ -79,7 +79,7 @@ class AnimeSource(log.Task):
             n = 10
         # get proxies
         if log.config[0].get('proxies_en'):
-            self.proxies = log.config[0].get('proxies_url')
+            self.proxies = {'https': log.config[0].get('proxies_url')}
         # active
         if self.pages:
             log.error_log.error(f'[loop_head] anime source active {name}:{self.url}, pages:{self.pages}')
