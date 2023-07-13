@@ -181,6 +181,7 @@ class error_log(Task):
         return f'error_log: keep {len(self.history.logs)} lines of log'
 
 
+# web
 
 def get_log_lines():
     return ''.join(error_log.history.logs)

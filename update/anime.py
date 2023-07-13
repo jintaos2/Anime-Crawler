@@ -80,6 +80,7 @@ class AnimeSource(log.Task):
         # get proxies
         if log.config[0].get('proxies_en'):
             self.proxies = {'https': log.config[0].get('proxies_url')}
+            log.error_log.error(f'[loop_head] proxies: {self.proxies}')
         # active
         if self.pages:
             log.error_log.error(f'[loop_head] anime source active {name}:{self.url}, pages:{self.pages}')
@@ -121,25 +122,27 @@ class AnimeSource(log.Task):
 
 
     def update_source(self, nth: int) -> list:
+        # child class
         pass
 
 
     def _reduce_cache(self): 
         """ if cache too small, read cache; if too big, reduce """
         n = log.config[0]['max_cache_items']
-        if len(self.cache) == 0:
+        if len(self.cache) < n:
             self._read_cache(n)
         elif len(self.cache) > n * 2:  
             x = len(self.cache) - n - 2
             new_cache = {k:v for i, (k, v) in enumerate(self.cache.items()) if i > x}
             self.cache = new_cache
 
-    def _read_cache(self, n: int):
+    def _read_cache(self, n: int): 
+        """ read n items from file """
         dicts = [] 
         count = 0
         # new to odd
         for file in sorted(os.listdir(self.cache_dir), reverse=True): 
-            if count > n:
+            if count >= n:
                 break
             try:
                 with open(f'{self.cache_dir}/{file}', 'r', encoding='utf8') as f:
@@ -210,7 +213,7 @@ class dmhy(AnimeSource):
         url = self.url.format(nth)
         for n_try in range(3):
             try:
-                raw=requests.get(url, proxies=self.proxies, timeout = 15).text 
+                raw=requests.get(url, proxies=self.proxies, timeout = 6).text 
             except Exception as e:
                 raw = ''
                 log.error_log.error(f"[loop_body] dmhy try={n_try} getting {url} error: {e}")
@@ -219,7 +222,7 @@ class dmhy(AnimeSource):
                 break
 
         tables = re.findall(r'<tbody>[\s\S]*</tbody>',raw)
-        log.error_log.error(f"[loop_body] dmhy page={nth} try={n_try} requests.get {url} r.text={len(raw)}")        
+        log.error_log.error(f"[loop_body] dmhy page={nth} try={n_try} requests.get {url} r.text={len(raw)} tables={len(tables)}")        
         if len(tables) == 0:
             return []
             
@@ -238,7 +241,8 @@ class dmhy(AnimeSource):
                 release_size = re.sub(r'<.*?>','',detail[4])
                 new_items.append(Anime(release_time, release_type, release_title, release_magnet,release_size))  
             except:
-                log.error_log.info('parse dmhy table error', traceback.format_exc())
+                log.error_log.info('parse dmhy table error', traceback.format_exc()) 
+        log.error_log.error(f"[loop_body] dmhy page={nth} try={n_try} get items number={len(new_items)}")
         return new_items
 
 

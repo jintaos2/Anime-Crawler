@@ -41,8 +41,8 @@ class RuleItem:
                 return False     # title not match 
 
         epsode_ = self.epsode_filter.findall(title)
-        if len(epsode_) > 0 and re.match(r'\d+', epsode_[-1]):
-            epsode = int(epsode_[-1])
+        if len(epsode_) > 0 and re.match(r'\d+', epsode_[0]):
+            epsode = int(epsode_[0])
             if not self.epsodes & (1<<epsode):
                 return False     # epsode not match    
         else:

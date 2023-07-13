@@ -1,57 +1,49 @@
 - max_log_lines: 400
-  max_cache_items: 1000
+  max_cache_items: 5000
   download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
-  proxies_en: true
+  proxies_en: false
   proxies_url: http://localhost:7890
   sources:
     dmhy:
     - https://dmhy.org/topics/list/page/{}
-    - 2
+    - 5
     nyaa:
     - https://nyaa.si/?p={}
     - 0
     dmhy2:
     - https://dongmanhuayuan.myheartsite.com/api/acg/search
     - 0
-  title_epsodes: '[ \[【减第E](\d\d)[Fv\- \]】（集话話]'
+  title_epsodes: (?<=[^\da-zB-DF-Z])\d\d(?=[^\db])|(?<=第)\d(?=话)
   title_must:
   - 動畫
   - 简|CHS|GB|繁|CHT|BIG5
   title_score:
   - 简|CHS|GB
   - 1080|2160
-- filters: 想要成为影之实力者|Kage no Jitsuryokusha ni Naritakute
-  epsodes: 18+
-- filters: 冰海战记 第二季
-  epsodes: 4+
-- filters: 转生王女与天才千金的魔法革命|Tensei Oujo
-  epsodes: 5+
 - filters: 机动战士高达 水星的魔女|Mobile Suit Gundam THE WITCH
+  epsodes: 25+
+- filters: 失眠的你|Kimi wa Houkago
+  epsodes: 14+
+- filters: 亡骸游戏|Dead Mount Death
   epsodes: 13+
-- filters: 生而为狗|Inu ni Nattara
-  epsodes: 5+
-- filters: 别当欧尼酱了|Onii-chan wa Oshimai
-  epsodes: 5+
-- filters: 异世界悠闲农家|Isekai Nonbiri Nouka
-  epsodes: 4+
-- filters: 阿鲁斯的巨兽|Ars no Kyojuu
-  epsodes: 4+
-- filters: 枪神|Trigun Stampede
-  epsodes: 4+
-- filters: 尼尔|NieR.*Automata
-  epsodes: 4+
-- filters: 沦落者之夜|Nokemono-tachi no Yoru
-  epsodes: 1+
-- filters: 妖幻三重奏|Ayakashi
-  epsodes: 4+
-- filters: 魔术士欧菲流浪之旅
-  epsodes: 1+
-- filters: 狩火之王|Hikari no
-  epsodes: 4+
-- filters: 大雪海|Ooyukiumi
-  epsodes: 4+
-- filters: 万事屋|Benriya Saitou
-  epsodes: 4+
-- filters: 异世界舅舅|Isekai Ojisan
+- filters: 跃动青春|Skip to Loafer
   epsodes: 13+
+- filters: 地狱乐|Jigokuraku
+  epsodes: 14+
+- filters: 无神世界中的神明活动|Kaminaki Sekai no Kamisama Katsudou
+  epsodes: 13+
+- filters: 魔法使的新娘 第二季|Mahoutsukai no Yomeu S
+  epsodes: 13+
+- filters: 石纪元 第三季|Dr.STONE
+  epsodes: 12+
+- filters: 我推的孩子|Oshi no Ko
+  epsodes: 12+
+- filters: 总之就是非常可爱 第二季|Tonikaku Kawaii S2
+  epsodes: 13+
+- filters: 小鸟之翼 第二季|Golf Girls.*S0?2
+  epsodes: '13'
+- filters: 天国大魔境|Tengoku Daimakyou
+  epsodes: 14+
+- filters: 我心里危险的东西
+  epsodes: 1+
