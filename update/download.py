@@ -8,28 +8,26 @@ import time
 
 from . import anime
 
-
 class RuleItem:
     def __init__(
             self, 
-            dir: str, 
-            title: re.Pattern, 
-            epsodes: int, 
-            title_must: List[re.Pattern],
-            title_score: List[re.Pattern], 
-            epsode_filter: re.Pattern,
-            order: Optional[int] = None
+            dir: str,               # download directory name
+            title: re.Pattern,      # title filter 
+            epsodes: str,           # ex. 0b11111111001100110
+            title_must: List[re.Pattern],   # title must contain keyword
+            title_score: List[re.Pattern],  # title score keyword
+            epsode_filter: re.Pattern,    # epsode filter
+            order: int = 0,     
         ) -> None:
 
         self.dir = dir 
-        self.epsodes = epsodes  
+        self.epsodes = self.epsode_str2int(epsodes)
         self.title_must = title_must + [title] 
         self.title_score = title_score 
         self.epsode_filter = epsode_filter
-        # {epsode:Anime}
-        self.matched: Dict[int, List[anime.Anime]] = {} 
         self.order = order  
-        # log.error_log.error(f'[new rule] epsodes={(epsodes & ((1<<32)-1)):0>25b} dir={dir}')
+        # {epsode:[Anime]}
+        self.matched: Dict[int, List[anime.Anime]] = {} 
 
     def match(self, item: anime.Anime) -> bool:
         """
@@ -41,12 +39,12 @@ class RuleItem:
                 return False     # title not match 
 
         epsode_ = self.epsode_filter.findall(title)
-        if len(epsode_) > 0 and re.match(r'\d+', epsode_[0]):
-            epsode = int(epsode_[0])
+        if len(epsode_) > 0 and re.match(r'\d+', epsode_[-1]):  # 选集
+            epsode = int(epsode_[-1])
             if not self.epsodes & (1<<epsode):
                 return False     # epsode not match    
         else:
-            log.error_log.info(f"[loop_body] filter epsode error: {title}")
+            log.log.error(f"[filter] epsode error: {title}")
             return False 
         
         score = 0
@@ -58,61 +56,11 @@ class RuleItem:
         temp = item.copy()
         temp.score = score
         self.matched[epsode].append(temp) 
+        return True
 
     def delete(self, epsode: int):
         self.epsodes &= ~(1<<epsode)
 
-
-
-@log.add_task
-class match_rule(log.Task):
-
-    rule_items: List[RuleItem]
-
-    def __init__(self):
-        self.re_dir_name = re.compile(r'[<>/\\\|:"*? ]')
-
-
-    def loop_head(self):
-        """ load log """
-        if 'title_must' not in log.config[0]:
-            log.config[0]['title_must'] = ["動畫", "简|CHS|GB|繁|CHT|BIG5"]  
-        if 'title_score' not in log.config[0]:
-            log.config[0]['title_score'] = ["简|CHS|GB", "1080|2160"]  
-        if 'title_epsodes' not in log.config[0]:
-            log.config[0]['title_epsodes'] = r'[ \[【第](\d\d)[v\- \]】（集话]'  
-
-        self.title_must = [re.compile(i, re.I) for i in log.config[0]['title_must']] 
-        self.title_score = [re.compile(i, re.I) for i in log.config[0]['title_score']]
-        self.epsode_filter = re.compile(log.config[0]['title_epsodes'], re.I)
-
-        self.rule_items: List[RuleItem] = []  
-        for i in log.config[1:]:
-            self.rule_items.append(self._read_log(i))   
-        log.error_log.error(f'[loop_head] matcher find {len(self.rule_items)} rules')
-
-
-    def _read_log(self, item: Dict[str,str]):
-        """
-        {
-            'filters': '忍者一时|Shinobi no Ittoki',
-            'epsodes': '1, 2, 3-4, 7+,'
-            'order': -1
-        }
-        """ 
-        return RuleItem(
-            dir = self._valid_dir_name(item['filters']), 
-            title = re.compile(item['filters']),  
-            epsodes=self.epsode_str2int(str(item['epsodes'])),
-            title_must=self.title_must, 
-            title_score=self.title_score, 
-            epsode_filter=self.epsode_filter,
-            order = item.get('order')
-        )
-                
-    def _valid_dir_name(self, s: str):
-        ret = s.split('|')[0] 
-        return self.re_dir_name.sub('', ret)
 
     def epsode_str2int(self,a:str) -> set: # '1-2, 5-6, 9+' -> ...11111111001100110
         ret = 0 
@@ -155,55 +103,91 @@ class match_rule(log.Task):
         return ','.join(ret) 
 
 
-    def loop_body(self):
-        t = time.time()
-        total = 0 
-        n = 0
-        for source in log.tasks:
-            if isinstance(source, anime.AnimeSource):
-                for new_item in source.cache.values():
-                    total += 1
-                    for rule in self.rule_items:
-                        if rule.match(new_item): 
-                            n += 1
-                            break
-        log.error_log.error(f'[loop_body] match {n} of {total} items, cost {time.time()-t} s')
-
-    def loop_tail(self):
-        for idx, rule in enumerate(self.rule_items):
-            log.config[idx+1]['epsodes'] = self.epsode_int2str(rule.epsodes)
-
-
-
-
-@log.add_task
-class download(log.Task):
+class match_rule(log.Task):
 
     def __init__(self):
-        self.aria2_url = None 
-        self.aria2_dir = None
+        super().__init__()
+
 
     def loop_head(self):
-        """ read url, config """  
+        # aria2  
         self.aria2_url = log.config[0].get('aria2')
         self.aria2_dir = log.relative_path(log.config[0].get('download_dir'))
-        log.error_log.error(f'[loop_head] download url={self.aria2_url}, dir={self.aria2_dir}')
+        yield self.debug(f'download url={self.aria2_url}, dir={self.aria2_dir}')
 
 
-    def loop_body(self): 
-        s = xmlrpc.client.ServerProxy(self.aria2_url)
-        for rule in match_rule.rule_items:
-            for epsode, animes in rule.matched.items():
-                animes = sorted(animes, key=lambda x: x.score)
-                try:
-                    anime = animes[rule.order]
-                except:
-                    anime = animes[-1] 
-                new_info = f"epsode={epsode} score={anime.score} title={anime.release_title}"
-                try:
-                    id_ = s.aria2.addUri([anime.release_magnet],{'dir': f'{self.aria2_dir}/{rule.dir}'}) 
-                    aria_status = s.aria2.tellStatus(id_) 
-                    log.error_log.info(f"[loop_body] [✔download] {new_info} --> {aria_status['dir']}")
-                    rule.delete(epsode)
-                except Exception as e:
-                    log.error_log.info(f"[loop_body] [✘download] {new_info}\n  --> aria={self.aria2_url}: {e}")
+    def _read_log(self, item: Dict[str,str]):
+        """
+        {
+            'filters': '忍者一时|Shinobi no Ittoki',
+            'epsodes': '1, 2, 3-4, 7+,'
+            'title':{
+                'epsodes': '(?<=[^\\da-zB-DF-Z])\\d\\d(?=[^\\db])|(?<=第)\\d(?=话)',        # epsode filter
+                'must': ['動畫', '简|CHS|GB|繁|CHT|BIG5'],                                  # 标题必须包含的关键字
+                'score': ['简|CHS|GB', '1080|2160'],                                       # 标题得分
+                'select': 0,                                                              # 每一集的选择顺序
+            }
+        }
+        """  
+        title = log.valid_title_filter(item.get('title'))
+
+        title_must: list = title.get('must')
+        title_score: list = title.get('score')
+        epsode_filter: str = title.get('epsodes')
+        title_select: int = title.get('select') 
+
+        return RuleItem(
+            dir = self._valid_dir_name(item['filters']), 
+            title = re.compile(item['filters']),  
+            epsodes=str(item['epsodes']),
+            title_must=[re.compile(i, re.I) for i in title_must], 
+            title_score=[re.compile(i, re.I) for i in title_score],
+            epsode_filter=re.compile(epsode_filter, re.I),
+            order = title_select,
+        )
+                
+    def _valid_dir_name(self, s: str) -> str:
+        ret = s.split('|')[0]  
+        return re.sub(r'[<>/\\\|:"*? ]', '', ret)
+
+    def loop_body(self):
+        with log.config_lock:
+            # load rules 
+            rule_items: List[RuleItem] = []  
+            for i in log.config[1:]:
+                rule_items.append(self._read_log(i))       # if error, break this stage
+            yield self.debug(f'matcher find {len(rule_items)} rules')
+        
+            total = 0 
+            n = 0
+            for source in log.tasks:
+                if isinstance(source, anime.AnimeSource):
+                    for new_item in source.cache.values():
+                        total += 1
+                        for rule in rule_items:
+                            if rule.match(new_item): 
+                                n += 1
+            yield self.debug(f'matcher match {n} of {total} items')
+
+            s = xmlrpc.client.ServerProxy(self.aria2_url)
+            for rule in rule_items:
+                for epsode, animes in rule.matched.items():
+                    animes = sorted(animes, key=lambda x: x.score, reverse=True)  # score high to low
+                    try:
+                        target = animes[rule.order]
+                    except:
+                        target = animes[-1] 
+                    new_info = f"epsode={epsode} score={target.score} title={target.release_title}"
+                    try:
+                        id_ = s.aria2.addUri([target.release_magnet],{'dir': f'{self.aria2_dir}/{rule.dir}'}) 
+                        aria_status = s.aria2.tellStatus(id_) 
+                        rule.delete(epsode)
+                        yield self.info(f"[✔download] {new_info} --> {aria_status['dir']}")
+                    except Exception as e:
+                        yield self.info(f"[✘download] {new_info}\n  --> aria={self.aria2_url}: {e}")
+
+            for idx, rule in enumerate(rule_items):
+                log.config[idx+1]['epsodes'] = rule.epsode_int2str(rule.epsodes)   
+
+
+

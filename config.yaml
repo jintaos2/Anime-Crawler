@@ -1,5 +1,6 @@
-- max_log_lines: 400
+- max_log_lines: 100
   max_cache_items: 5000
+  max_interval: 300
   download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
   proxies_en: false
@@ -14,13 +15,15 @@
     dmhy2:
     - https://dongmanhuayuan.myheartsite.com/api/acg/search
     - 0
-  title_epsodes: (?<=[^\da-zB-DF-Z])\d\d(?=[^\db])|(?<=第)\d(?=话)
-  title_must:
-  - 動畫
-  - 简|CHS|GB|繁|CHT|BIG5
-  title_score:
-  - 简|CHS|GB
-  - 1080|2160
+  title:
+    epsodes: (?<=[^\da-zB-DF-Z])\d\d(?=[^\db])|(?<=第)\d(?=话)
+    must:
+    - 動畫
+    - 简|CHS|GB|繁|CHT|BIG5
+    score:
+    - 简|CHS|GB
+    - 1080|2160
+    select: 0
 - filters: 机动战士高达 水星的魔女|Mobile Suit Gundam THE WITCH
   epsodes: 25+
 - filters: 失眠的你|Kimi wa Houkago
@@ -47,3 +50,5 @@
   epsodes: 14+
 - filters: 我心里危险的东西
   epsodes: 1+
+- filters: 僵尸100|Zom 100
+  epsodes: 3+
