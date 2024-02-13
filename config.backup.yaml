@@ -3,12 +3,13 @@
   max_interval: 300
   download_dir: ../../anime
   aria2: http://127.0.0.1:6800/rpc
-  proxies_en: false
+  proxies_en: true
   proxies_url: http://localhost:7890
+  error_en: true
   sources:
     dmhy:
     - https://dmhy.org/topics/list/page/{}
-    - 5
+    - 50
     nyaa:
     - https://nyaa.si/?p={}
     - 0
@@ -16,39 +17,56 @@
     - https://dongmanhuayuan.myheartsite.com/api/acg/search
     - 0
   title:
-    epsodes: (?<=[^\da-zB-DF-Z])\d\d(?=[^\db])|(?<=第)\d(?=话)
+    epsodes: (?<=[\WAE])\d\d(?=[\Wv])|(?<=第)\d\d(?=[话話])
     must:
     - 動畫
     - 简|CHS|GB|繁|CHT|BIG5
     score:
     - 简|CHS|GB
     - 1080|2160
+    - 无修正
+    - 无修正
     select: 0
-- filters: 机动战士高达 水星的魔女|Mobile Suit Gundam THE WITCH
-  epsodes: 25+
-- filters: 失眠的你|Kimi wa Houkago
-  epsodes: 14+
-- filters: 亡骸游戏|Dead Mount Death
-  epsodes: 13+
-- filters: 跃动青春|Skip to Loafer
-  epsodes: 13+
-- filters: 地狱乐|Jigokuraku
-  epsodes: 14+
-- filters: 无神世界中的神明活动|Kaminaki Sekai no Kamisama Katsudou
-  epsodes: 13+
-- filters: 魔法使的新娘 第二季|Mahoutsukai no Yomeu S
-  epsodes: 13+
-- filters: 石纪元 第三季|Dr.STONE
-  epsodes: 12+
-- filters: 我推的孩子|Oshi no Ko
-  epsodes: 12+
-- filters: 总之就是非常可爱 第二季|Tonikaku Kawaii S2
-  epsodes: 13+
-- filters: 小鸟之翼 第二季|Golf Girls.*S0?2
-  epsodes: '13'
-- filters: 天国大魔境|Tengoku Daimakyou
-  epsodes: 14+
-- filters: 我心里危险的东西
-  epsodes: 1+
-- filters: 僵尸100|Zom 100
-  epsodes: 3+
+- filters: 葬送的芙莉莲|Sousou no Frieren
+  epsodes: 23+
+- filters: 香格里拉|Shangri-La Frontier
+  epsodes: 19+
+- filters: 不死不幸|Undead Unluck
+  epsodes: 19+
+- filters: 迷宫饭|Dungeon Meshi
+  epsodes: 7+
+- filters: 成为魔法少女|Mahou Shoujo ni Akogarete
+  epsodes: 7+
+- filters: 月光下的异世界之旅|Tsuki ga Michibiku Isekai Douchuu
+  epsodes: 7+
+- filters: 我心里危险的东西|Boku no Kokoro no Yabai Yatsu
+  epsodes: 19-28
+- filters: 我独自升级|Ore Dake Level Up
+  epsodes: 7+
+  title:
+    epsodes: (?<=[\WAE])\d+(?=[\Wv])|(?<=第)\d+(?=[话話])
+    must:
+    - 動畫
+    - 简|CHS|GB|繁|CHT|BIG5
+    score:
+    - 简|CHS|GB
+    - 1080|2160
+    - 无修正
+    - 无修正
+    select: 0
+- filters: 弱角友崎
+  epsodes: 7+
+- filters: 异修罗|Ishura
+  epsodes: 7+
+- filters: 魔都精兵的奴隶|Mato Seihei no Slave
+  epsodes: 7+
+- filters: 狩火之王
+  epsodes: 6+
+- filters: 婚戒物语|Kekkon Yubiwa Monogatari|Tales of Wedding Rings
+  epsodes: 7+
+- filters: 秒杀外挂|Sokushi Cheat ga
+  epsodes: 7+
+- filters: Metallic Rouge|金属口红
+  epsodes: 6+
+- filters: Bang Bravern|勇气爆发
+  epsodes: 6+

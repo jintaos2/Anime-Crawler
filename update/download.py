@@ -4,7 +4,9 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import re
 import xmlrpc.client
 import log
-import time
+import time 
+import pdb
+import copy 
 
 from . import anime
 
@@ -44,7 +46,9 @@ class RuleItem:
             if not self.epsodes & (1<<epsode):
                 return False     # epsode not match    
         else:
-            log.log.error(f"[filter] epsode error: {title}")
+            if log.config[0].get('error_en'):
+                yield f"[filter] epsode error: {title}"
+            log.debug(f"[filter] epsode error: {title}")
             return False 
         
         score = 0
@@ -101,6 +105,20 @@ class RuleItem:
                 bit_idx += 1 
                 a >>= 1 
         return ','.join(ret) 
+    
+    def __str__(self) -> str:
+        lines = [
+            '------------ Rule Item -----------', 
+            f'download_dir = {self.dir}', 
+            f'epsodes = {self.epsode_int2str(self.epsodes)}',
+            f'title_must = {self.title_must}',
+            f'title_score = {self.title_score}',
+            f'epsode_filter = {self.epsode_filter}',
+            f'order = {self.order}',
+            f'matched = {self.matched}',
+            '----------------------------------',
+        ]
+        return '\n'.join(lines) + '\n'
 
 
 class match_rule(log.Task):
@@ -129,7 +147,9 @@ class match_rule(log.Task):
             }
         }
         """  
-        title = log.valid_title_filter(item.get('title'))
+        title = copy.deepcopy(log.config[0].get('title'))
+        if isinstance(item.get('title'), dict):
+            title.update(item.get('title'))
 
         title_must: list = title.get('must')
         title_score: list = title.get('score')
@@ -151,43 +171,43 @@ class match_rule(log.Task):
         return re.sub(r'[<>/\\\|:"*? ]', '', ret)
 
     def loop_body(self):
-        with log.config_lock:
-            # load rules 
-            rule_items: List[RuleItem] = []  
-            for i in log.config[1:]:
-                rule_items.append(self._read_log(i))       # if error, break this stage
-            yield self.debug(f'matcher find {len(rule_items)} rules')
-        
-            total = 0 
-            n = 0
-            for source in log.tasks:
-                if isinstance(source, anime.AnimeSource):
-                    for new_item in source.cache.values():
-                        total += 1
-                        for rule in rule_items:
-                            if rule.match(new_item): 
-                                n += 1
-            yield self.debug(f'matcher match {n} of {total} items')
+        # load rules 
+        rule_items: List[RuleItem] = []  
+        for i in log.config[1:]:
+            rule_items.append(self._read_log(i))       # if error, break this stage
+        yield self.debug(f'matcher find {len(rule_items)} rules')
+    
+        total = 0 
+        n = 0
+        for source in log.tasks:
+            if isinstance(source, anime.AnimeSource):
+                for new_item in source.cache.values():
+                    total += 1
+                    for rule in rule_items:
+                        matched = yield from rule.match(new_item)
+                        if matched: 
+                            n += 1
+        yield self.debug(f'matcher match {n} of {total} items')
 
-            s = xmlrpc.client.ServerProxy(self.aria2_url)
-            for rule in rule_items:
-                for epsode, animes in rule.matched.items():
-                    animes = sorted(animes, key=lambda x: x.score, reverse=True)  # score high to low
-                    try:
-                        target = animes[rule.order]
-                    except:
-                        target = animes[-1] 
-                    new_info = f"epsode={epsode} score={target.score} title={target.release_title}"
-                    try:
-                        id_ = s.aria2.addUri([target.release_magnet],{'dir': f'{self.aria2_dir}/{rule.dir}'}) 
-                        aria_status = s.aria2.tellStatus(id_) 
-                        rule.delete(epsode)
-                        yield self.info(f"[✔download] {new_info} --> {aria_status['dir']}")
-                    except Exception as e:
-                        yield self.info(f"[✘download] {new_info}\n  --> aria={self.aria2_url}: {e}")
+        s = xmlrpc.client.ServerProxy(self.aria2_url)
+        for rule in rule_items:
+            for epsode, animes in rule.matched.items():
+                animes = sorted(animes, key=lambda x: x.score, reverse=True)  # score high to low
+                try:
+                    target = animes[rule.order]
+                except:
+                    target = animes[-1] 
+                new_info = f"epsode={epsode} score={target.score} title={target.release_title}"
+                try:
+                    id_ = s.aria2.addUri([target.release_magnet],{'dir': f'{self.aria2_dir}/{rule.dir}'}) 
+                    aria_status = s.aria2.tellStatus(id_) 
+                    rule.delete(epsode)
+                    yield self.info(f"[✔download] {new_info} --> {aria_status['dir']}")
+                except Exception as e:
+                    yield self.info(f"[✘download] {new_info}\n  --> aria={self.aria2_url}: {e}")
 
-            for idx, rule in enumerate(rule_items):
-                log.config[idx+1]['epsodes'] = rule.epsode_int2str(rule.epsodes)   
+        for idx, rule in enumerate(rule_items):
+            log.config[idx+1]['epsodes'] = rule.epsode_int2str(rule.epsodes)   
 
 
 

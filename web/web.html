@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap; 
+      background: #eee;
+      margin: 0 20px;
+      font: 400 16px/150% 'cascadia code';
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+    body .tab {
+      padding:10px 20px;
+      cursor:pointer;
+    }
+    body .section {
+      display:none;
+      width:100%;
+      flex-flow: row wrap;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      min-height:120px;
+      order:99;
+    }
+    /* 不显示 input 元素 */
+    body input[type=radio] {
+      position: absolute;
+      opacity:0;
+    }
+    /* checked + label 表示 input 被选中时，后续的label切换属性 */
+    body input[type=radio]:checked+.tab {
+      background:#fff;
+    }
+    /* checked + label + .section 表示 input 被选中时，后续的 section 切换属性 */
+    body input[type=radio]:checked+.tab+.section {
+      display:flex;
+    }
+
+
+    input{
+        font: 400 14px/140% 'cascadia code';
+        margin-right: 3em;
+        margin-top: 1em;
+    }
+    button{
+      width: 8em;
+      height: 2.5em;
+      margin: 0.5em;
+      color:#FFFFFF;
+      background: #1da1f2;
+      font: 400 16px/140% 'cascadia code';
+    }
+    label{
+      font: 400 16px/140% 'cascadia code';
+    }
+    textarea{
+      font: 400 14px/120% 'cascadia code';
+      white-space: nowrap;
+    } 
+    pre {
+      font: 400 12px/120% 'cascadia code';
+      overflow-x: scroll;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <input type="radio" name="x" id="tab1" checked=""><label for="tab1" class="tab">home</label>
+    <!-- 主页 -->
+    <div class="section">
+      <div id="status" style="width:40%;font: 400 20px/140% 'cascadia code';color:brown; ">windows</div>
+      <button id="stop" onclick="toggleTask()" style="background: green;">Running</button>
+      <button id="init" onclick="initTask()">init</button>
+      <button id="save" onclick="setConfig()">save</button>
+      <hr style="width: 90%;"/>
+      <div style="min-width: 15%; margin-right: 5%;">
+        <label>sources</label><br/> <textarea id="sources" rows="10" cols="100"></textarea> <br/>
+        <label>title</label><br/> <textarea id="title" rows="10" cols="100"></textarea> 
+      </div>
+      <div style="min-width: 15%;">  
+        <label>max log lines </label><input type="number" id="max_log_lines"/> <br/>
+        <label>max cache items </label><input type="number" id="max_cache_items"/> <br/>
+        <label>max interval </label><input type="number" id="max_interval"/> <br/>
+        <label>download dir </label><input type="text" id="download_dir"/> <br/>
+        <label>aria2 </label><input type="text" id="aria2"/> <br/>
+        <label for="proxies_en"> proxies </label> <input type="checkbox" id="proxies_en"/> <br/>
+        <label>proxies url </label><input type="text" id="proxies_url"/> <br/>
+        <label for="error_en"> error_en </label> <input type="checkbox" id="error_en"/> <br/>
+      </div>
+      <hr style="width: 90%;"/>
+      <div style="width: 100%; display: flex;justify-content: center;">
+        <pre id='log_box' style="width:65%;"></pre>
+        <div style="width:28%; margin-left: 15px;">
+          <!-- textareas with delete buttons -->
+          {% for i in range(40) %}
+            <div style="display: flex; align-items: center; margin:5px;">
+            <textarea id="textarea{{ i }}" rows="2" cols="80"></textarea>
+            <button onclick="deleteTextarea({{ i }})" style="width: 3em; font-size: 10px;" >
+              D
+            </button>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  <input type="radio" name="x" id="tab2"><label for="tab2" class="tab">search</label>
+    <!-- 搜索 -->
+    <div class="section">
+        <div style="width:100%;height: 30px;"></div> 
+        <textarea id="search_input" rows="4" cols="60">
+(?<=[\WAE])\d\d(?=[\Wv])|(?<=第)\d\d(?=[话話])
+title 
+10
+        </textarea> 
+        <button id="search_button" onclick="searchCache()">search</button>   
+        <div style="width:100%;height: 30px;"></div> 
+        <pre id='search_output' style="width:80%;"></pre>      
+    </div>
+  <input type="radio" name="x" id="tab3"><label for="tab3" class="tab">test</label>
+    <div class="section">
+        <pre>
+            <span style="color: red;">This is red text.</span>
+            <span style="color: blue;">This is green text.</span>
+            <span style="color: green;">This is blue text.</span>
+        </pre>
+        <div style="width: 20%; height: 100px; background: red;margin-top: 200px;"></div>
+    </div>
+  
+  <script>
+    function deleteTextarea(index) {
+        document.getElementById('textarea' + index).value = '';
+    }
+
+    let isRunning = true;
+
+    function fetchData(){
+        if (!isRunning){
+            return;
+        }
+        fetch('/get_config')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('status').innerText = data.status;
+          document.getElementById('max_log_lines').value = data.max_log_lines;
+          document.getElementById('max_cache_items').value = data.max_cache_items;
+          document.getElementById('max_interval').value = data.max_interval;
+          document.getElementById('download_dir').value = data.download_dir;
+          document.getElementById('aria2').value = data.aria2;
+          document.getElementById('proxies_en').checked = data.proxies_en;
+          document.getElementById('error_en').checked = data.error_en;
+          document.getElementById('proxies_url').value = data.proxies_url;
+          document.getElementById('sources').value = data.sources;
+          document.getElementById('title').value = data.title;
+          for (var i = 0; i < 40; i++) {
+            document.getElementById('textarea' + i).value = data.data[i];
+            var rows = data.data[i].split('\n').length;
+            if (rows > 2){
+              document.getElementById('textarea' + i).rows = rows;
+            }
+          } 
+          document.getElementById('log_box').innerHTML = data.log;
+        })
+        .catch(error => console.error('Error:', error));
+    } 
+    setInterval(fetchData, 1900);
+
+    function toggleTask(){
+        // 将 running 状态传递给后端
+        fetch('/toggle_task',{
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            'status': isRunning,
+          })
+        })
+        .then(response => response.json())
+        .then(data => { 
+          isRunning = data.status;
+          if (isRunning){
+            document.getElementById('stop').innerText = 'Running';
+            document.getElementById('stop').style.backgroundColor = 'green';
+          } else {
+            document.getElementById('stop').innerText = 'Stopped';
+            document.getElementById('stop').style.backgroundColor = 'red';
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function initTask(){
+      fetch('/init_task',{
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+    function setConfig(){
+      if (isRunning){
+        alert('stop task first');
+        return;
+      }
+      var data = [];
+      for (var i = 0; i < 40; i++) {
+          var textareaValue = document.getElementById('textarea' + i).value;
+          data.push(textareaValue);
+      }
+      fetch('/set_config', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'max_log_lines': document.getElementById('max_log_lines').value,
+          'max_cache_items': document.getElementById('max_cache_items').value,
+          'max_interval': document.getElementById('max_interval').value,
+          'download_dir': document.getElementById('download_dir').value,
+          'aria2': document.getElementById('aria2').value,
+          'proxies_en': document.getElementById('proxies_en').checked,
+          'error_en': document.getElementById('error_en').checked,
+          'proxies_url': document.getElementById('proxies_url').value,
+          'sources': document.getElementById('sources').value,
+          'title': document.getElementById('title').value,
+          'data': data,
+        })
+      })
+      .then(response => response.json())
+      .then(data => {alert(data.data);})
+      .catch(error => console.error('Error:', error));
+    }
+
+    function searchCache(){
+      fetch('/search_cache', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'search_input': document.getElementById('search_input').value,
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('search_output').innerText = data.data;
+      })
+      .catch(error => console.error('Error:', error));
+    }
+
+  </script>
+
+
+</body>
+</html>

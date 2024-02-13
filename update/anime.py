@@ -51,13 +51,14 @@ class Anime:
         return Anime(**self.__dict__)
 
 
-class AnimeSource(log.Task):
+class AnimeSource(log.AnimeBase):
     def __init__(self):
         super().__init__()
         self.cache_dir = log.relative_path(f'../log/cache/{self.__class__.__name__}') 
         self.url: str = ''
         self.proxies = None
         self.pages: int = 0  
+        self.stop: bool = False
         # release_magnet: [release_time, release_type, release_title, release_magnet,release_size]
         self.cache: Dict[str, Anime] = {} 
         self.cache_new: List[Anime] = []
@@ -68,31 +69,31 @@ class AnimeSource(log.Task):
         try: 
             self.url, self.pages = sources.get(self.__class__.__name__)
         except:
-            pass   
+            yield self.info(f'cannot get config.sources.{self.__class__.__name__}')   
         yield self.debug(f'anime source {self.__class__.__name__} url={self.url}, pages={self.pages}')
-        # get cache size
-        n = log.config[0].get('max_cache_items') 
         # get proxies
         if log.config[0].get('proxies_en'):
             self.proxies = {'https': log.config[0].get('proxies_url')} 
         else:
             self.proxies = None
         yield self.debug(f'proxies={self.proxies}')
-        # active
-        if self.pages:
-            if not os.path.isdir(self.cache_dir):
-                os.makedirs(self.cache_dir)  
-            self._reduce_cache()
+
+        if not os.path.isdir(self.cache_dir):
+            os.makedirs(self.cache_dir)  
+        yield from self._reduce_cache()
         yield self.debug(f'cache size={len(self.cache)}')
 
 
     def loop_body(self):
+        self.stop = False
         new_items: Dict[str, Anime] = {} 
-        if self.pages:
+        self.pages = max(self.pages, 0)
+        if self.pages > 0:
             curr_date = datetime.date.today() 
             file_curr = f'{self.cache_dir}/{curr_date}.txt'  
-            stop = False
-            for n in range(self.pages):
+            for n in range(self.pages): 
+                if self.stop:
+                    break
                 self.cache_new = []
                 yield from self.update_source(n+1)
                 for item in self.cache_new:
@@ -101,17 +102,16 @@ class AnimeSource(log.Task):
                     if magnet not in self.cache:
                         new_items[magnet] = item 
                     else:
-                        stop = True 
+                        self.stop = True 
                         break 
-                if stop:
-                    break
 
             with open(file_curr, 'a+', encoding='utf8') as f:
                 for _, i in reversed(new_items.items()):        # odd to new
                     self.cache[i.release_magnet] = i            # update cache
                     f.write(str(i))                             # update cache file 
                     f.write('\n\n') 
-        yield self.debug(f'anime source {self.__class__.__name__} read {self.pages} pages, get {len(new_items)} new items')
+
+        yield self.debug(f'anime source {self.__class__.__name__} read max {self.pages} pages, get {len(new_items)} new items')
 
 
     def update_source(self, nth: int)-> None:
@@ -122,11 +122,12 @@ class AnimeSource(log.Task):
         """ if cache too small, read cache; if too big, reduce """
         n = log.config[0]['max_cache_items']
         if len(self.cache) < n:
-            self._read_cache(n)
+            yield from self._read_cache(n)
         elif len(self.cache) > n * 1.5:  
             x = len(self.cache) - n - 2
             temp = {k:v for i, (k, v) in enumerate(self.cache.items()) if i > x}
             self.cache = temp
+        yield
 
     def _read_cache(self, n: int): 
         """ read n items from file """
@@ -146,11 +147,11 @@ class AnimeSource(log.Task):
                 dicts.append(new_items)
                 count += len(new_items) 
             except Exception as e:
-                log.log.debug(f"read odd cache {file} error: {e}") 
+                yield self.debug(f"read odd cache {file} error: {e}") 
         # odd to new
         for d in reversed(dicts):
             self.cache.update(d)  
-        log.log.debug(f'anime source {self.__class__.__name__} read {len(self.cache)} items from cache')
+        yield self.debug(f'anime source {self.__class__.__name__} read {len(self.cache)} items from cache')
 
     def __iter__(self):
         return iter(self.cache.values()) 
@@ -166,8 +167,8 @@ class dmhy(AnimeSource):
                 raw=requests.get(url, proxies=self.proxies, timeout = 6).text 
             except Exception as e:
                 raw = ''
-                log.log.debug(f"[loop_body] dmhy try={n_try} getting {url} error: {e}")
-                time.sleep(n_try*2+2)
+                yield self.debug(f"[loop_body] dmhy try={n_try} getting {url} error: {e}")
+                yield self.sleep(n_try*2+2)
             if len(raw) > 20:
                 break
 
@@ -175,6 +176,8 @@ class dmhy(AnimeSource):
         yield self.debug(f'dmhy page={nth} last_try={n_try} requests.get {url} r.text={len(raw)} tables={len(tables)}')   
 
         if len(tables) == 0:
+            self.stop = True 
+            yield self.info(f'early stop {self.__class__.__name__} {url}')
             return 
             
         table = tables[0]    
@@ -188,11 +191,11 @@ class dmhy(AnimeSource):
                 release_title = re.findall(r'<a.*?>(.*?)</a>',detail[2])[-1]
                 release_title = re.sub(r',','.',release_title)
                 release_magnet = re.findall( r'href="([^"]*)"',detail[3])[0]
-                assert release_magnet[0:6] == 'magnet'
+                assert release_magnet[0:6] == 'magnet', f'{release_magnet}'
                 release_size = re.sub(r'<.*?>','',detail[4])
                 new_items.append(Anime(release_time, release_type, release_title, release_magnet,release_size))  
             except:
-                yield self.debug('parse dmhy table error', traceback.format_exc()) 
+                yield self.info('parse dmhy table error: '+ traceback.format_exc()) 
         yield self.debug(f'dmhy page={nth} try={n_try} get items number={len(new_items)}')
         self.cache_new = new_items
 
@@ -217,7 +220,7 @@ class dmhy2(AnimeSource):
             'finishNum': '-'}
             """
         except Exception as e:
-            log.log.debug(f"[error] post {main_url}! error_info={e}")
+            yield self.debug(f"[error] post {main_url}! error_info={e}")
             return []
 
         def post_item(_id:int, _link:str, title:str="") -> str:
@@ -233,8 +236,8 @@ class dmhy2(AnimeSource):
                     assert r[:8] == 'magnet:?'
                     return r 
                 except:
-                    log.log.debug(f"[error post n_try={i}] url={url}, \ndata={data}, \ntitle={title}\n{traceback.format_exc(1)}")
-                    log.log.debug(f"[error post n_try={i}] {title}")
+                    yield self.debug(f"[error post n_try={i}] url={url}, \ndata={data}, \ntitle={title}\n{traceback.format_exc(1)}")
+                    yield self.debug(f"[error post n_try={i}] {title}")
                     time.sleep(i*2+2.5)
             return None
                 
@@ -265,7 +268,7 @@ class nyaa(AnimeSource):
                 raw= requests.get(url, proxies=self.proxies, timeout=15).text
             except Exception as e:
                 raw = ''
-                log.log.debug(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
+                yield self.debug(f"[error] getting {url}! try={n_try} response={raw} error_info={e}")
                 time.sleep(1)
             if len(raw) > 20:
                 break
@@ -286,8 +289,8 @@ class nyaa(AnimeSource):
                     release_time = re.findall(r'>(.*?)<',detail[4])[-1]
                     new_items.append(Anime(release_time, release_type, release_title, release_magnet,release_size))  
                 except:
-                    log.log.debug(traceback.format_exc())
-                    log.log.debug(f"[regex] row: {i}")            
+                    yield self.debug(traceback.format_exc())
+                    yield self.debug(f"[regex] row: {i}")            
         self.cache_new = new_items 
         yield   
 
